@@ -1,73 +1,65 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, onMounted } from 'vue';
+
+// const width = ref(window.innerWidth);
+// window.addEventListener('resize', () => {
+//     width.value = window.innerWidth;
+// });
 
 const buttons = ref([
-    { id: 1, nombre: 'Inicio', icon: '/img/house-chimney.png', active: true },
-    { id: 2, nombre: 'Facturas', icon: '/img/file.png', active: false },
-    { id: 3, nombre: 'Modulos', icon: '/img/module.png', active: false },
-    { id: 4, nombre: 'Herramientas', icon: '/img/tools.png', active: false },
-    { id: 6, nombre: 'Modulos', icon: '/img/module.png', active: false }
+    { id: 1, nombre: 'Inicio', secciones: ['Productos', 'Planes', 'Precios'], icon: '/img/house-chimney.png', active: false },
+    { id: 2, nombre: 'Facturas', secciones: ['Generar', 'Historial'], icon: '/img/file.png', active: false },
+    { id: 3, nombre: 'Modulos', secciones: ['Tablas', 'Referencias', 'Detalles'], icon: '/img/module.png', active: false },
+    { id: 4, nombre: 'Herramientas', secciones: [], icon: '/img/tools.png', active: false },
 ])
 
+// Configuracion para el estado activo del boton
 const activeButton = (id) => {
     buttons.value.forEach(button => {
-        if(button.id == id){
+        if (button.id == id) {
             button.active = true;
+            const Inicio = ref(button.nombre);
+            // sessionStorage.setItem('Inicio', Inicio.value);
+            sessionStorage.setItem('activeButton', id);
         } else {
             button.active = false;
         };
     });
 }
 
-// Configuración de los iconos
-const iconosVisibles = ref(4);
-const primerIcono = ref(0);
-
-const iconosCortados = computed(() => {
-    return buttons.value.slice(primerIcono.value, iconosVisibles.value);
+onMounted(() => {
+    const botonActivo = sessionStorage.getItem('activeButton');
+    if (botonActivo) {
+        activeButton(parseInt(botonActivo));
+    } else {
+        activeButton(1);
+    }
 });
 
-const MostrarMasIconos = () => {
-    if (iconosVisibles.value < buttons.value.length) {
-        iconosVisibles.value++;
-        primerIcono.value = iconosVisibles.value - 4;
-    }
-}
-
-const MostrarMenosIconos = () => {
-    if (primerIcono.value > 0) {
-        iconosVisibles.value--;
-        primerIcono.value = iconosVisibles.value - 4;
-    }
-}
 
 </script>
 <template>
     <div class="section-asidebar">
         <div class="section-asidebar__content">
-            <svg @click="MostrarMenosIconos" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                class="size-6 btnMostrarMenos" :class="{ ocultar: iconosVisibles <= 4 }">
-                <path fill-rule="evenodd"
-                    d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z"
-                    clip-rule="evenodd" />
-            </svg>
+
             <div class="left">
-                <button v-for="button in iconosCortados" @click="activeButton(button.id)" 
-                    :class="{ active: button.active }">
+                <button v-for="button in buttons" @click="activeButton(button.id)" :class="{ active: button.active }">
                     <NuxtLink :to="`/${button.nombre}`" class="link">
-                    <img :src="button.icon" alt="Icono" class="size-6 icon" />
-                    <div class="right">
-                        <h3>{{ button.nombre }}</h3>
-                    </div>
+                        <img :src="button.icon" alt="Icono" class="size-6 icon" />
                     </NuxtLink>
+                    <div class="right">
+                        <NuxtLink :to="`/${button.nombre}`">
+                            <h3>{{ button.nombre }}</h3>
+                        </NuxtLink>
+                        <div class="down" :class="{ ocultar: button.secciones.length == 0 }">
+                            <h3 class="font-medium" v-for="seccion in button.secciones">
+                                <NuxtLink :to="`/${seccion}`">{{ seccion }}</NuxtLink>
+                            </h3>
+                        </div>
+                    </div>
                 </button>
             </div>
-            <svg @click="MostrarMasIconos" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                class="size-6 btnMostrarMas" :class="{ ocultar: iconosVisibles >= buttons.length }">
-                <path fill-rule="evenodd"
-                    d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z"
-                    clip-rule="evenodd" />
-            </svg>
+
         </div>
     </div>
 </template>
@@ -89,7 +81,6 @@ const MostrarMenosIconos = () => {
     border-radius: 10px;
     height: 60%;
     background-color: #fa696980;
-    backdrop-filter: blur(10px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
 }
@@ -134,7 +125,6 @@ const MostrarMenosIconos = () => {
     transform: translateX(-10px) translateY(-50%);
     pointer-events: none;
     background-color: #fa6969;
-    backdrop-filter: blur(10px);
     padding: 10px;
     width: 150px;
     border-radius: 0 30px 30px 0;
@@ -142,12 +132,16 @@ const MostrarMenosIconos = () => {
 }
 
 .right h3 {
-    color: #ffffff;
+    color: #bf0707;
     padding: 5px 10px;
     cursor: pointer;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: bolder;
     transition: all 0.3s ease;
+}
+
+.right h3:hover {
+    color: #bf0707;
 }
 
 .left button:hover .right {
@@ -173,6 +167,44 @@ const MostrarMenosIconos = () => {
 
 .ocultar {
     display: none;
+}
+
+.down {
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: -10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    transform: translateX(-50%) translateY(-5);
+    pointer-events: none;
+    background-color: #ffffff1f;
+    backdrop-filter: blur(20px);
+    padding: 10px;
+    width: 150px;
+    border-radius: 0 0 30px 0;
+    transition: all 0.3s ease;
+}
+
+.down h3 {
+    color: var(--color-gray-300);
+}
+
+.down h3:hover {
+    color: #e6770f;
+}
+
+.right:hover .down {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(10%) translateY(0);
+}
+
+.right:hover {
+    border-radius: 0 30px 0 0;
 }
 
 @media screen and (max-width: 768px) {
@@ -203,11 +235,44 @@ const MostrarMenosIconos = () => {
     }
 
     .right {
-        display: none;
+        position: fixed;
+        top: 10%;
+        right: -20px;
+        left: 20%;
+        width: 50vh;
+        border-radius: 10px 10px 0 0;
+        padding: 10px;
+    }
+
+    .right:hover {
+        border-radius: 10px 10px 0 0;
+    }
+
+    .left:hover .down {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
     }
 
     .left button:hover .right {
         transform: translate(-60px, 28%);
+    }
+
+    .down {
+        left: 0;
+        width: 50vh;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .down:hover {
+        pointer-events: all;
+    }
+
+    .down h3 {
+        width: 100%;
+    }
+
+    .down h3 a {
+        padding: 5px;
     }
 
     .btnMostrarMenos {
@@ -217,6 +282,10 @@ const MostrarMenosIconos = () => {
 
     .btnMostrarMas {
         rotate: -90deg;
+    }
+
+    .link {
+        pointer-events: none;
     }
 }
 </style>

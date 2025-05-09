@@ -1,6 +1,6 @@
 <template>
     <div class="containerMain">
-        <Navbar></Navbar>
+        <Navbar :titulo="tituloNavbar"></Navbar>
         <Aside></Aside>
         <div class="section-content">
             <slot></slot>
@@ -8,6 +8,12 @@
         <Footer></Footer>
     </div>
 </template>
+
+<script setup>
+import {defineProps} from 'vue';
+const titulo = defineProps(['titulo']);
+const tituloNavbar = ref(titulo);
+</script>
 
 <style scoped>
 .containerMain {

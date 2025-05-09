@@ -1,5 +1,5 @@
 <template>
-    <Template :page="Facturas" :title="Facturas">
+    <Template titulo="Facturas">
         <div class="section-content" slot="body">
             <div class="section-inicio">
                 <h1 class="font-bold text-2xl text-white">Facturas</h1>
@@ -13,9 +13,3 @@
         </div>
     </Template>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-const Facturas = 'Facturas'
-const page = ref('Facturas')
-</script>
