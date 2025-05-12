@@ -2,9 +2,9 @@
     <div class="containerMain">
         <Navbar :titulo="tituloNavbar"></Navbar>
         <Aside></Aside>
-        <div class="section-content">
-            <slot></slot>
-        </div>
+            <div class="section-content">
+                <slot></slot>
+            </div>
         <Footer></Footer>
     </div>
 </template>

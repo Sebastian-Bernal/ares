@@ -3,11 +3,8 @@ import { ref,defineProps } from 'vue';
 const titulo = defineProps(['titulo']);
 const tituloNavbar = ref(titulo);
 
-const showNavbarBurguer = ref(false);
-const cambiarEstado = () => {
-    showNavbarBurguer.value = !showNavbarBurguer.value;
-};
-
+import { useShowNavbar } from '../stores/navbarResponsive.js';
+const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 </script>
 <template>
     <div class="navbar">
@@ -147,7 +144,6 @@ const cambiarEstado = () => {
     left: 0;
     padding: 10px;
     backdrop-filter: blur(10px);
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
     grid-area: navbar;
 }
 
@@ -159,8 +155,7 @@ const cambiarEstado = () => {
 
 .logo {
     color: #fff;
-    width: 120px;
-    height: 40px;
+    width: 110px;
     object-fit: contain;
     margin-left: 15px;
 }

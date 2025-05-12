@@ -1,10 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-
-// const width = ref(window.innerWidth);
-// window.addEventListener('resize', () => {
-//     width.value = window.innerWidth;
-// });
+import { useShowNavbar } from '../stores/navbarResponsive.js';
+const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 
 const buttons = ref([
     { id: 1, nombre: 'Inicio', secciones: ['Productos', 'Planes', 'Precios'], icon: '/img/house-chimney.png', active: false },
@@ -18,8 +15,6 @@ const activeButton = (id) => {
     buttons.value.forEach(button => {
         if (button.id == id) {
             button.active = true;
-            const Inicio = ref(button.nombre);
-            // sessionStorage.setItem('Inicio', Inicio.value);
             sessionStorage.setItem('activeButton', id);
         } else {
             button.active = false;
@@ -36,18 +31,23 @@ onMounted(() => {
     }
 });
 
+const cambiarEstadoFalse = () => {
+    if (showNavbarBurguer.value) {
+        cambiarEstado(false);
+    }
+}
 
 </script>
 <template>
     <div class="section-asidebar">
         <div class="section-asidebar__content">
 
-            <div class="left">
-                <button v-for="button in buttons" @click="activeButton(button.id)" :class="{ active: button.active }">
-                    <NuxtLink :to="`/${button.nombre}`" class="link">
+            <div class="left" @click="cambiarEstadoFalse()">
+                <button v-for="button in buttons" :class="{ active: button.active }">
+                    <NuxtLink :to="`/${button.nombre}`" class="link" @click="activeButton(button.id)">
                         <img :src="button.icon" alt="Icono" class="size-6 icon" />
                     </NuxtLink>
-                    <div class="right">
+                    <div class="right" @click="activeButton(button.id)">
                         <NuxtLink :to="`/${button.nombre}`">
                             <h3>{{ button.nombre }}</h3>
                         </NuxtLink>
@@ -85,6 +85,8 @@ onMounted(() => {
     border-radius: 10px;
 }
 
+/* Contenedores botones */
+
 .left {
     height: 90%;
     display: flex;
@@ -113,6 +115,15 @@ onMounted(() => {
 .left button .icon {
     filter: invert(1);
 }
+
+.left button.active {
+    background-color: #bf0707;
+    color: #ffffff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* Submenu */
 
 .right {
     opacity: 0;
@@ -150,24 +161,11 @@ onMounted(() => {
     transform: translateX(0) translateY(-50%);
 }
 
-.left button.active {
-    background-color: #bf0707;
-    color: #ffffff;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.btnMostrarMenos {
-    rotate: 180deg;
-    cursor: pointer;
-}
-
-.btnMostrarMas {
-    cursor: pointer;
-}
-
 .ocultar {
     display: none;
 }
+
+/* Lista Submenu */
 
 .down {
     opacity: 0;
@@ -207,6 +205,10 @@ onMounted(() => {
     border-radius: 0 30px 0 0;
 }
 
+.show-navbar {
+    pointer-events: none;
+}
+
 @media screen and (max-width: 768px) {
     .section-asidebar {
         width: 100%;
@@ -236,7 +238,7 @@ onMounted(() => {
 
     .right {
         position: fixed;
-        top: 10%;
+        top: 11%;
         right: -20px;
         left: 20%;
         width: 50vh;
@@ -246,6 +248,7 @@ onMounted(() => {
 
     .right:hover {
         border-radius: 10px 10px 0 0;
+        /* pointer-events: all; */
     }
 
     .left:hover .down {
@@ -273,15 +276,6 @@ onMounted(() => {
 
     .down h3 a {
         padding: 5px;
-    }
-
-    .btnMostrarMenos {
-        rotate: 90deg;
-        cursor: pointer;
-    }
-
-    .btnMostrarMas {
-        rotate: -90deg;
     }
 
     .link {
