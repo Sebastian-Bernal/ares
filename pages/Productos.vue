@@ -16,7 +16,7 @@ const usarTraerProductos = async () => {
 </script>
 
 <template>
-    <Template titulo="Productos">
+    <!-- <Template titulo="Productos"> -->
         <div slot="body">
             <div class="section-inicio">
                 <h1 class="font-bold text-2xl text-white">Pagina de Productos Disponibles</h1>
@@ -28,7 +28,6 @@ const usarTraerProductos = async () => {
                         <div class="card-body">
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div class="card-item">
-                                    <img :src="producto.image" alt="" class="card-image">
                                     <p class="card-description">{{ producto.description }}</p>
                                     <p class="card-price">${{ producto.price }}</p>
                                 </div>
@@ -38,5 +37,5 @@ const usarTraerProductos = async () => {
                 </div>
             </div>
         </div>
-    </Template>
+    <!-- </Template> -->
 </template>
