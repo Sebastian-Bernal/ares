@@ -1,5 +1,5 @@
 <template>
-    <div class="section-content" slot="body">
+    <div class="section-content">
         <div class="section-inicio">
             <h1 class="font-bold text-2xl text-white">Facturas</h1>
             <p class="text-white mt-4">kemkxemkemcowkecmwlxk,

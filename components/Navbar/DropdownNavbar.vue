@@ -14,7 +14,6 @@
 </template>
 
 <script setup>
-
 const titulo = defineProps(['nombre', 'icon','submenu']);
 
 </script>

@@ -17,7 +17,7 @@ const usarTraerProductos = async () => {
 
 <template>
     <!-- <Template titulo="Productos"> -->
-        <div slot="body">
+        <div>
             <div class="section-inicio">
                 <h1 class="font-bold text-2xl text-white">Pagina de Productos Disponibles</h1>
                 <div class="container row justify-center mt-5">

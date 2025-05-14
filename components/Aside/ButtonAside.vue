@@ -4,12 +4,14 @@
             <i class="fa-solid text-xl" :class="data.icon"></i>
         </NuxtLink>
         <div class="right" @click="activeButton(data.id)">
-            <NuxtLink :to="`/${data.nombre}`">
+            <NuxtLink :to="`/${data.nombre}`" @click="footer.cambiarSecciones(null)">
                 <h3>{{ data.nombre }}</h3>
             </NuxtLink>
             <div class="down" :class="{ 'ocultar': data.secciones.length == 0 }">
                 <h3 class="font-medium" v-for="seccion in data.secciones">
-                    <NuxtLink :to="`/${seccion.titulo}`">{{ seccion.titulo }}</NuxtLink>
+                    <NuxtLink :to="`/${seccion.titulo}`" @click="footer.cambiarSecciones(seccion.subSecciones)">
+                        {{ seccion.titulo }}
+                    </NuxtLink>
                 </h3>
             </div>
         </div>
@@ -17,31 +19,14 @@
 </template>
 
 <script setup>
-import { buttons } from '~/data/buttons';
+import { activeButton, sessionActive } from '~/stores/ButtonActive';
+import { useSeccionFooter } from '~/stores/NavigationFooter';
 const titulo = defineProps(['data']);
-
-console.log(titulo.data)
+const footer = useSeccionFooter();
 
 onMounted(() => {
-    const botonActivo = sessionStorage.getItem('activeButton');
-    if (botonActivo) {
-        activeButton(parseInt(botonActivo));
-    } else {
-        activeButton(1);
-    }
+    sessionActive()
 });
-
-// Configuracion para el estado activo del boton
-const activeButton = (id) => {
-    buttons.value.forEach(button => {
-        if (button.id == id) {
-            button.active = true;
-            sessionStorage.setItem('activeButton', id);
-        } else {
-            button.active = false;
-        };
-    });
-}
 </script>
 
 <style scoped>

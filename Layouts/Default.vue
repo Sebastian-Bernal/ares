@@ -1,6 +1,6 @@
 <template>
     <div class="containerMain">
-        <Navbar :titulo="tituloNavbar"></Navbar>
+        <Navbar></Navbar>
         <Aside></Aside>
             <div class="section-content">
                 <slot></slot>
@@ -8,12 +8,6 @@
         <Footer></Footer>
     </div>
 </template>
-
-<script setup>
-import {defineProps} from 'vue';
-const titulo = defineProps(['titulo']);
-const tituloNavbar = ref(titulo);
-</script>
 
 <style scoped>
 .containerMain {
@@ -47,12 +41,18 @@ const tituloNavbar = ref(titulo);
     background-color: rgba(0,0,0,0.3);
     margin: 0 10px;
     padding: 20px;
+    border-radius: 15px;
 }
 
 /* Scroll */
 .section-content::-webkit-scrollbar {
-    width: 5px;     
-    height: 2px;    
+    width: 5px;   
+    height: 2px;
+    display: none;
+}
+
+.section-content::-webkit-scrollbar-thumb:hover {
+    display: flex;
 }
 
 .section-content::-webkit-scrollbar-thumb {
