@@ -1,16 +1,12 @@
 <script setup>
 import NavigationFooter from './NavigationFooter.vue';
-// import { useSeccionFooter } from '~/stores/NavigationFooter';
-// const footer = useSeccionFooter();
-
-// console.log(footer.secciones)
 </script>
 
 <template>
     <footer class="section-footer">
         <div class="section-footer__content">
-            <div class="flex w-[60%] justify-start items-center">
-                <p class="text-white w-[70px]">ARES</p>
+            <div class="flex w-[60%] items-center">
+                <p class="text-white w-[70px] logoFooter">ARES</p>
                 <NavigationFooter/>
             </div>
 
@@ -26,10 +22,26 @@ import NavigationFooter from './NavigationFooter.vue';
     left: 0;
     right: 0;
     grid-area: footer;
-    height: 45px;
+    height: 50px;
 }
 
 .section-footer__content {
     padding: 0 20px;
+    height: 44px;
+    display: flex;
+}
+
+@media screen and (max-width: 768px) {
+    .logoFooter {
+        display: none;
+    }
+
+    .section-footer {
+        height: 40px;
+    }
+
+    .section-footer__content {
+        padding: 0 10px;
+    }
 }
 </style>

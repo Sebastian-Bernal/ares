@@ -1,15 +1,15 @@
 <template>
     <button :class="{ 'active' : data.active }">
-        <NuxtLink :to="`/${data.nombre}`" class="link" @click="activeButton(data.id)">
+        <NuxtLink class="link">
             <i class="fa-solid text-xl" :class="data.icon"></i>
         </NuxtLink>
         <div class="right" @click="activeButton(data.id)">
-            <NuxtLink :to="`/${data.nombre}`" @click="footer.cambiarSecciones(null)">
+            <NuxtLink :to="`/${data.nombre}/index`" @click="footer.cambiarSecciones(null)">
                 <h3>{{ data.nombre }}</h3>
             </NuxtLink>
             <div class="down" :class="{ 'ocultar': data.secciones.length == 0 }">
                 <h3 class="font-medium" v-for="seccion in data.secciones">
-                    <NuxtLink :to="`/${seccion.titulo}`" @click="footer.cambiarSecciones(seccion.subSecciones)">
+                    <NuxtLink :to="`/${data.nombre}/${seccion.titulo}`" @click="footer.cambiarSecciones(seccion.subSecciones)">
                         {{ seccion.titulo }}
                     </NuxtLink>
                 </h3>

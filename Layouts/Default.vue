@@ -1,13 +1,21 @@
 <template>
     <div class="containerMain">
+        <div v-if="estado.cargando"></div>
         <Navbar></Navbar>
         <Aside></Aside>
             <div class="section-content">
-                <slot></slot>
+                <div class="container">
+                    <slot></slot>
+                </div>
             </div>
         <Footer></Footer>
     </div>
 </template>
+
+<script setup>
+import { useApiRest } from '../stores/apiRest';
+const estado = useApiRest();
+</script>
 
 <style scoped>
 .containerMain {
@@ -37,25 +45,31 @@
 
 .section-content {
     grid-area: main;
-    overflow-y: scroll;
+    overflow-y: hidden;
     background-color: rgba(0,0,0,0.3);
     margin: 0 10px;
     padding: 20px;
-    border-radius: 15px;
+    border-radius: 15px 15px 15px 0;
+}
+
+.container {
+    height: 98%;
+    margin-bottom: 2%;
+    overflow-y: scroll;
 }
 
 /* Scroll */
-.section-content::-webkit-scrollbar {
+.container::-webkit-scrollbar {
     width: 5px;   
     height: 2px;
     display: none;
 }
 
-.section-content::-webkit-scrollbar-thumb:hover {
+.container::-webkit-scrollbar-thumb:hover {
     display: flex;
 }
 
-.section-content::-webkit-scrollbar-thumb {
+.container::-webkit-scrollbar-thumb {
     background: #ffffff;
     border-radius: 5px;
 }
@@ -65,7 +79,7 @@
     box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
 }
 
-.section-content::-webkit-scrollbar-track {
+.container::-webkit-scrollbar-track {
     backdrop-filter: blur(10px);
     border-radius: 4px;
 }

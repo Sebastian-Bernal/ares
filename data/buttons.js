@@ -3,18 +3,18 @@ import { ref } from "vue";
 export const buttons = ref([
     {
         id: 1,
-        nombre: "Inicio",
+        nombre: "Empresa",
         secciones: [
         {
-            titulo: 'Productos',
-            subSecciones: ['Informacion','Agregar','Eliminar']
+            titulo: 'Resoluciones',
+            subSecciones: ['Crear','Eliminar','Actualizar']
         },
         {
-            titulo: 'Planes',
+            titulo: 'Terceros',
             subSecciones: ['Pro', 'Familiar']
         },
         {
-            titulo: 'Precios',
+            titulo: 'Usuarios',
             subSecciones: ['Individual', 'Estudiante']
         }
         ],
@@ -23,22 +23,40 @@ export const buttons = ref([
     },
     {
         id: 2,
-        nombre: "Facturas",
-        secciones: [{titulo: "Generar"}, {titulo: "Historial"}],
+        nombre: "Productos",
+        secciones: [
+            {
+                titulo: "Todos",
+                subSecciones: ['Inventario','Crear','Actualizar']
+            }, 
+            {
+                titulo: "Historial"
+            }
+        ],
         icon: "fa-file",
         active: false,
     },
     {
         id: 3,
-        nombre: "Modulos",
-        secciones: [{titulo: "Tablas"}, {titulo: "Referencias"},{titulo: "Detalles"}],
+        nombre: "Reportes",
+        secciones: [
+            {
+                titulo: "Historial",
+                subSecciones: ['Index','Crear','Eliminar','Actualizar']
+            }   
+        ],
         icon: "fa-fire",
         active: false,
     },
     {
         id: 4,
-        nombre: "Herramientas",
-        secciones: [],
+        nombre: "Ventas",
+        secciones: [
+            {
+                titulo: "Facturas",
+                subSecciones: ['Generar','Historial','Eliminar']
+            }
+        ],
         icon: "fa-screwdriver-wrench",
         active: false,
     },

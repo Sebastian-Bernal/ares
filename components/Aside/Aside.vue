@@ -42,18 +42,17 @@ const cambiarEstadoFalse = () => {
     background-color: #fa696980;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 16px;
+    padding-left: 3px;
 }
 
 /* Contenedores botones */
 
 .left {
     height: 100%;
-    width: 60px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    padding-left: 8%;
 }
 
 
