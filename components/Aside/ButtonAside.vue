@@ -33,7 +33,7 @@ onMounted(() => {
 button {
     border: none;
     cursor: pointer;
-    color: #e4e4e4;
+    color: var(--color-gris-claro);
     padding: 15px;
     display: flex;
     border-radius: 50% 0 0 50%;
@@ -42,13 +42,13 @@ button {
 }
 
 button:hover {
-    background-color: #fa6969;
-    color: #ffffff;
+    background-color: var(--color-rojo-claro);
+    color: var(--color-blanco);
 }
 
 button.active {
-    background-color: #bf0707;
-    color: #ffffff;
+    background-color: var(--color-rojo);
+    color: var(--color-blanco);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -62,7 +62,7 @@ button.active {
     align-items: center;
     transform: translateX(-10px) translateY(-50%);
     pointer-events: none;
-    background-color: #fa6969;
+    background-color: var(--color-rojo-claro);
     padding: 10px;
     width: 150px;
     border-radius: 0 30px 30px 0;
@@ -70,7 +70,7 @@ button.active {
 }
 
 .right h3 {
-    color: #bf0707;
+    color: var(--color-rojo);
     padding: 5px 10px;
     cursor: pointer;
     font-size: 16px;
@@ -79,7 +79,7 @@ button.active {
 }
 
 .right h3:hover {
-    color: #bf0707;
+    color: var(--color-rojo);
 }
 
 .left button:hover .right {
@@ -106,7 +106,7 @@ button.active {
     z-index: 1;
     transform: translateX(-50%) translateY(-5);
     pointer-events: none;
-    background-color: #ffffff1f;
+    background-color: rgba(0,0,0,0.4);
     backdrop-filter: blur(20px);
     padding: 10px;
     width: 150px;
@@ -115,11 +115,11 @@ button.active {
 }
 
 .down h3 {
-    color: var(--color-gray-300);
+    color: var(--color-gris-claro);
 }
 
 .down h3:hover {
-    color: #e6770f;
+    color: var(--color-naranja);
 }
 
 .right:hover .down {

@@ -1,16 +1,20 @@
 <script setup>
 import { traerProductos } from '../../stores/productos.js';
 import { onMounted, ref } from 'vue';
+import { useApiRest } from '../../stores/apiRest.js';
 
 const productos = ref([]);
+const loader = useApiRest();
 
 onMounted(() => {
     usarTraerProductos();
 });
 
 const usarTraerProductos = async () => {
+    loader.cargando = true;
     const data = await traerProductos();
-    productos.value = data
+    productos.value = data;
+    loader.cargando = false;
 };
 
 </script>

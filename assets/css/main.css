@@ -1,3 +1,25 @@
 @import "tailwindcss";
 @import '@fortawesome/fontawesome-free/css/all.css';
 
+:root {
+    /* Complementarios */
+    --color-azul: #07bfbf;
+    --color-naranja: #ff8000;
+    --color-verde: #1ebf07;
+    --color-purpura: #800080;
+    /* Rojos */
+    --color-rojo-suave: #e03c3c;
+    --color-rojo: #bf0707;
+    --color-rojo-oscuro: #7f0505;
+
+    --color-rojo-claro: #ff9999;
+    --color-rojo-claro-trp5: #ff99995b;
+    /* Blanco y negro rojizos */
+    --color-blanco: #fff5f5;
+    --color-negro: #1a0000;
+    --color-negro-rojizo: #150101;
+    /* Grises */
+    --color-gris-claro: #f0dcdc;
+    --color-gris: #bfa3a3;
+    --color-gris-oscuro: #4d2d2d;
+}

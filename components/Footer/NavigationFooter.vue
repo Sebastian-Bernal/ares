@@ -35,12 +35,12 @@ const idActivo = ref(0);
 
 .containerNavFooter h2:hover {
     background-color: rgba(0, 0, 0, 0.3);
-    color: #fff;
+    color: var(--color-blanco);
 }
 
 .active {
     background-color: rgba(0, 0, 0, 0.3);
-    color: #fff;
+    color: var(--color-blanco);
     clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 0% 100%);
 }
 

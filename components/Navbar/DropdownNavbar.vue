@@ -24,10 +24,11 @@ const titulo = defineProps(['nombre', 'icon','submenu']);
     position: absolute;
     top: 50px;
     margin-left: -60px;
-    background-color: #150101;
+    background-color: var(--color-negro-rojizo);
     border-radius: 5px;
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 100;
 }
 
 .navbar__content__list li:hover .dropdown {
@@ -35,13 +36,13 @@ const titulo = defineProps(['nombre', 'icon','submenu']);
 }
 
 .dropdown li {
-    color: #ffffff;
+    color: var(--color-blanco);
     padding: 5px 10px;
     cursor: pointer;
 }
 
 .dropdown li:hover {
-    background-color: #1f1f1f;
+    background-color: var(--color-gris-oscuro);
 }
 
 .dropdown::after {

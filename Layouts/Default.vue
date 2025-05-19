@@ -1,13 +1,13 @@
 <template>
     <div class="containerMain">
-        <div v-if="estado.cargando"></div>
+        <Loader v-if="estado.cargando"></Loader>
         <Navbar></Navbar>
         <Aside></Aside>
-            <div class="section-content">
-                <div class="container">
-                    <slot></slot>
-                </div>
+        <div class="section-content">
+            <div class="container">
+                <slot></slot>
             </div>
+        </div>
         <Footer></Footer>
     </div>
 </template>
@@ -27,7 +27,7 @@ const estado = useApiRest();
     grid-template-rows: 60px 1fr 50px;
     grid-template-columns: 80px 1fr;
     height: 100vh;
-    background: radial-gradient(at left top, #bf0707, #150101);
+    background: radial-gradient(at left top, var(--color-rojo), var(--color-negro-rojizo));
     overflow-y: none;
 }
 
@@ -46,7 +46,7 @@ const estado = useApiRest();
 .section-content {
     grid-area: main;
     overflow-y: hidden;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0, 0, 0, 0.3);
     margin: 0 10px;
     padding: 20px;
     border-radius: 15px 15px 15px 0;
@@ -60,23 +60,13 @@ const estado = useApiRest();
 
 /* Scroll */
 .container::-webkit-scrollbar {
-    width: 5px;   
+    width: 5px;
     height: 2px;
     display: none;
 }
 
 .container::-webkit-scrollbar-thumb:hover {
     display: flex;
-}
-
-.container::-webkit-scrollbar-thumb {
-    background: #ffffff;
-    border-radius: 5px;
-}
-
-.section-content::-webkit-scrollbar-thumb:hover {
-    background: #867878;
-    box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
 }
 
 .container::-webkit-scrollbar-track {

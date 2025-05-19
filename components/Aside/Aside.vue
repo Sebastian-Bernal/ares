@@ -39,7 +39,7 @@ const cambiarEstadoFalse = () => {
     align-items: center;
     border-radius: 10px;
     height: 60%;
-    background-color: #fa696980;
+    background-color: var(--color-rojo-suave);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 16px;
     padding-left: 3px;

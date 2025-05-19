@@ -1,8 +1,8 @@
 <template>
     <div class="relative">
     <label>{{ label }}</label>
-    <input :placeholder="placeholder" class="inputFondo bg-gray-300"/>
-    <i class="fa-solid iconInput text-gray-500" :class="icon"></i>
+    <input :placeholder="placeholder" class="inputFondo"/>
+    <i class="fa-solid iconInput text-gray-600" :class="icon"></i>
     </div>
 </template>
 
@@ -13,16 +13,16 @@ defineProps(['label','placeholder','icon','color']);
 
 <style scoped>
 .inputFondo {
-    padding: 5px 10px 5px 25px;
+    padding: 5px 10px 5px 35px;
     border-radius: 10px;
     width: 100%;
-    color: #494949;
+    background-color: var(--color-rojo-claro-trp5);
 }
 
 .iconInput {
     position: absolute;
-    left: 5px;
-    top: 45%;
+    left: 10px;
+    top: 47.5%;
     transform: translateY(-50%);
 }
 </style>

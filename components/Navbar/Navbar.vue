@@ -52,7 +52,7 @@ const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 }
 
 .logo {
-    color: #fff;
+    color: var(--color-blanco);
     width: 110px;
     object-fit: contain;
     margin-left: 15px;
@@ -67,7 +67,7 @@ const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 .navbar__content__list li {
     display: flex;
     align-items: center;
-    color: #fff;
+    color: var(--color-blanco);
     padding: 10px 15px;
 }
 
@@ -75,7 +75,6 @@ const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
     display: none;
     font-size: 20px;
     font-weight: bold;
-    color: rgb(0, 173, 238);
 }
 
 .burgerIcon {
@@ -83,7 +82,7 @@ const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 }
 
 .buergerIcon:hover {
-    background-color: #150101;
+    background-color: var(--color-negro-rojizo);
     border-radius: 10px;
 }
 
@@ -122,7 +121,7 @@ const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
         top: 95px;
         right: 0;
         width: 100%;
-        background-color: #150101;
+        background-color: var(--color-negro-rojizo);
         backdrop-filter: blur(10px);
         border-radius: 10px;
         padding: 10px;

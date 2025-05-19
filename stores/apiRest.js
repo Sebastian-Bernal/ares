@@ -5,5 +5,6 @@ export const useApiRest = defineStore('apiRest', {
         cargando: false,
     }),
     actions: {
+
     }
 })
