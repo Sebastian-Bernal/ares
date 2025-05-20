@@ -1,34 +1,38 @@
 <template>
     <div class="containerTable">
         <div class="table">
-            <div class="headTable grid-cols-[100px_1fr_1fr_1fr] p-2 grid grid-rows-1 text-xs font-bold"
-                :class="`grid-cols-[${primero}_${segundo}_${segundo}_${segundo}_${segundo}]`">
-                <h2>Id</h2>
-                <h2>Producto</h2>
-                <h2>Cliente</h2>
-                <h2>Fecha</h2>
+            <div class="headTable grid-cols-[100px_1fr_1fr_1fr_1fr] p-2 grid grid-rows-1 text-xs font-bold text-wrap">
+                <h2>Id <i class="fa-solid fa-caret-down"></i></h2>
+                <h2>Producto <i class="fa-solid fa-caret-down"></i></h2>
+                <h2>Cliente <i class="fa-solid fa-caret-down"></i></h2>
+                <h2>Fecha <i class="fa-solid fa-caret-down"></i></h2>
                 <h2>Acciones</h2>
             </div>
             <hr class="horizontal mt-2">
-            <div v-for="data in datos" class="bodyTable grid grid-rows-1 p-2" :class="tamaños">
+            <div v-for="data in datosFiltrados" class="bodyTable grid grid-cols-[100px_1fr_1fr_1fr_1fr] grid-rows-1 p-2">
                 <p>{{ data.id }}</p>
                 <p>{{ data.Nombre }}</p>
                 <p>{{ data.Cliente }}</p>
                 <p>{{ data.Fecha }}</p>
-                <p class="flex gap-2 items-center justify-center accionesTabla">
-                <div v-for="action in data.Acciones">
-                    <i v-if="action === 'ver'" class="fa-solid fa-eye"></i>
-                    <i v-else-if="action === 'actualizar'" class="fa-solid fa-pencil"></i>
-                    <i v-else-if="action === 'borrar'" class="fa-solid fa-trash"></i>
-                </div>
+                <div class="flex items-center justify-center accionesTabla text-center gap-2">
+                <p v-for="action in data.Acciones" class="inline">
+                    <i v-if="action === 'ver'" class="fa-solid fa-eye btnActions bg-sky-600 text-xs"></i>
+                    <i v-else-if="action === 'actualizar'" class="fa-solid fa-pencil btnActions bg-[var(--color-naranja)] text-xs"></i>
+                    <i v-else-if="action === 'borrar'" class="fa-solid fa-trash btnActions bg-red-600 text-xs"></i>
                 </p>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-defineProps('datos');
+import { computed } from 'vue';
+import { usePaginador } from '../../stores/paginador';
+const paginador = usePaginador();
+
+const datosFiltrados = computed(() => paginador.datosPaginados);
+
 const tamaños = `grid-cols-[${primero}_${segundo}_${segundo}_${segundo}_${segundo}]`;
 const primero = '100px';
 const segundo = '1fr';
@@ -39,6 +43,10 @@ const segundo = '1fr';
     border-radius: 10px 10px 0 0;
     text-align: center;
     color: var(--color-naranja);
+}
+
+.headTable h2 i:hover {
+    color: var(--color-rojo-suave);
 }
 
 .bodyTable {
@@ -61,12 +69,23 @@ const segundo = '1fr';
     width: 100%;
 }
 
-.accionesTabla i:hover {
-    color: var(--color-verde);
+.horizontal {
+    color: var(--color-gris);
 }
 
-.horizontal {
-    margin: .75rem 0;
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+.btnActions {
+    float: left;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    padding: .40rem;
+    margin: 0;
+    border-radius: 50%;
+}
+
+.btnActions:hover {
+    opacity: .7;
 }
 </style>

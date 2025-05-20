@@ -1,9 +1,4 @@
-import { ref } from "vue";
-
-export const datosTabla = ref({
-    nombre: 'Historial de ventas',
-    acciones: ['ver', 'actualizar', 'borrar'],
-    datos: [
+export const datosTabla = [
         {
             id: 1,
             Nombre: "Producto",
@@ -17,7 +12,7 @@ export const datosTabla = ref({
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'borrar'],
+            Acciones: ['ver','actualizar', 'borrar'],
             active: false,
         },
         {
@@ -25,7 +20,7 @@ export const datosTabla = ref({
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: [],
+            Acciones: ['ver','actualizar','borrar'],
             active: false,
         },
         {
@@ -92,5 +87,20 @@ export const datosTabla = ref({
             Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
-    ]
-});
+        {
+            id: 12,
+            Nombre: "Producto",
+            Cliente: "Producto",
+            Fecha: "Producto",
+            Acciones: ['ver', 'actualizar', 'borrar'],
+            active: false,
+        },
+        {
+            id: 13,
+            Nombre: "Producto",
+            Cliente: "Producto",
+            Fecha: "Producto",
+            Acciones: ['ver', 'actualizar', 'borrar'],
+            active: false,
+        },
+    ];
