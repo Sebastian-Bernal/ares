@@ -1,9 +1,8 @@
 import { defineStore } from "pinia";
-import { datosTabla } from "~/data/TablaVenta";
 
-export const usePaginador = defineStore('paginador', {
+export const usePaginador = defineStore("tabla", {
     state: () => ({
-        registros: datosTabla,
+        registros: [],
         paginaActual: 1,
         itemsPorPagina: 10,
     }),
@@ -19,17 +18,16 @@ export const usePaginador = defineStore('paginador', {
             return state.registros.slice(inicio, fin);
         },
 
-        numRegistros(state) {
-            
-        },
-
         puedeAvanzar(state) {
-            return state.paginaActual < Math.ceil(state.registros.length / state.itemsPorPagina);
+            return (
+                state.paginaActual <
+                Math.ceil(state.registros.length / state.itemsPorPagina)
+            );
         },
 
         puedeRetroceder(state) {
             return state.paginaActual > 1;
-        }
+        },
     },
 
     actions: {
@@ -49,5 +47,16 @@ export const usePaginador = defineStore('paginador', {
                 this.paginaActual--;
             }
         },
-    }
-})
+
+        setRegistros(data) {
+            this.registros = data;
+            this.paginaActual = 1;
+        },
+
+        buscarDatos(value) {
+            this.registros.filter((data) => {
+                data.Cliente === value.toUpperCase()
+            })
+        },
+    },
+});

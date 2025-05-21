@@ -4,7 +4,7 @@
         <Navbar></Navbar>
         <Aside></Aside>
         <div class="section-content">
-            <div class="container">
+            <div class="container-content">
                 <slot></slot>
             </div>
         </div>
@@ -48,28 +48,28 @@ const estado = useApiRest();
     overflow-y: hidden;
     background-color: rgba(0, 0, 0, 0.3);
     margin: 0 10px;
-    padding: 20px;
+    padding: 0 0 20px 0;
     border-radius: 15px 15px 15px 0;
 }
 
-.container {
+.container-content {
     height: 98%;
     margin-bottom: 2%;
     overflow-y: scroll;
 }
 
 /* Scroll */
-.container::-webkit-scrollbar {
+.container-content::-webkit-scrollbar {
     width: 5px;
     height: 2px;
     display: none;
 }
 
-.container::-webkit-scrollbar-thumb:hover {
+.container-content::-webkit-scrollbar-thumb:hover {
     display: flex;
 }
 
-.container::-webkit-scrollbar-track {
+.container-content::-webkit-scrollbar-track {
     backdrop-filter: blur(10px);
     border-radius: 4px;
 }

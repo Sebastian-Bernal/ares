@@ -1,10 +1,9 @@
 export const datosTabla = [
         {
-            id: 1,
+            id: "983",
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
@@ -12,7 +11,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver','actualizar', 'borrar'],
             active: false,
         },
         {
@@ -20,7 +18,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver','actualizar','borrar'],
             active: false,
         },
         {
@@ -28,7 +25,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
@@ -36,7 +32,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
@@ -44,7 +39,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
@@ -52,7 +46,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
@@ -60,15 +53,13 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
             id: 9,
             Nombre: "Producto",
-            Cliente: "Producto",
+            Cliente: "Juan",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
@@ -76,7 +67,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
@@ -84,7 +74,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
@@ -92,7 +81,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
         {
@@ -100,7 +88,6 @@ export const datosTabla = [
             Nombre: "Producto",
             Cliente: "Producto",
             Fecha: "Producto",
-            Acciones: ['ver', 'actualizar', 'borrar'],
             active: false,
         },
     ];

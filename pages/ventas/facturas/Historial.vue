@@ -1,26 +1,33 @@
 <template>
     <div class="section-table">
-
-        <div class="flex w-[100%] justify-between items-cent px-10 mt-5 md:flex-row flex-col gap-3">
-            <h1 class="font-bold text-2xl tituloTabla">Historial de ventas</h1>
-            <div class="flex gap-3 w-[50%] justify-end">
-                <InputBgGray placeholder="Filtrar por datos..." icon="fa-search"/>
-                <div class="flex gap-1 items-center">
-                    <button class="btnAgregar text-white"><i class="fa-solid fa-plus"></i></button>
-                    <h4>Agregar</h4>
-                </div>
-            </div>
-        </div>
-        <Tabla/>
-        <Paginador/>
+        <HeaderTabla titulo="Historial De Ventas" />
+        <Tabla :columnas="[
+                { header: 'id', action: true, link_url: 'https://nose', class: 'col-span-1'},
+                { header: 'Nombre', action: true, class: 'col-span-1'},
+                { header: 'Cliente', action: false, class: 'col-span-1' },
+                { header: 'Cliente', action: true, class: 'col-span-1' },
+                { header: 'Fecha', action: true, class: 'col-span-1' }
+            ]"
+            :acciones="{ action: true, icons: ['ver', 'actualizar', 'borrar'], class: 'col-span-1' }"
+            :datos="{content: datosFiltrados}" />
+        <Paginador />
     </div>
 </template>
 
 <script setup>
-import InputBgGray from '~/components/Inputs/InputBgGray.vue';
+import HeaderTabla from '~/components/Tables/HeaderTabla.vue';
 import Tabla from '~/components/Tables/Tabla.vue';
 import Paginador from '~/components/Tables/Paginador.vue';
+import { datosTabla } from '~/data/TablaVenta';
 
+import { computed, onMounted } from 'vue';
+import { usePaginador } from '../../../stores/tabla';
+const paginador = usePaginador();
+const datosFiltrados = computed(() => paginador.datosPaginados);
+
+onMounted(() => {
+    paginador.setRegistros(datosTabla);
+});
 </script>
 
 <style scoped>
@@ -34,27 +41,11 @@ import Paginador from '~/components/Tables/Paginador.vue';
 
 .containerTable {
     margin: 20px;
-    height: 50vh;
+    height: 70%;
     overflow-y: scroll;
 }
 
 .containerTable::-webkit-scrollbar {
     display: none;
-}
-
-.tituloTabla {
-    color: var(--color-rojo);
-    text-shadow: 5px 5px 4px var(--color-gris);
-}
-
-.btnAgregar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: var(--color-primary);
-}
-
-.btnAgregar:hover {
-    opacity: .8;
 }
 </style>

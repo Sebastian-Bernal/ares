@@ -1,25 +1,32 @@
 <template>
     <div class="containerTable">
         <div class="table">
-            <div class="headTable grid-cols-[100px_1fr_1fr_1fr_1fr] p-2 grid grid-rows-1 text-xs font-bold text-wrap">
-                <h2>Id <i class="fa-solid fa-caret-down"></i></h2>
-                <h2>Producto <i class="fa-solid fa-caret-down"></i></h2>
-                <h2>Cliente <i class="fa-solid fa-caret-down"></i></h2>
-                <h2>Fecha <i class="fa-solid fa-caret-down"></i></h2>
-                <h2>Acciones</h2>
+            <div class="headTable grid p-2 text-xs font-bold text-wrap" :class="`grid-cols-${totalCols}`">
+                <h2 v-for="col in columnas" :class="col.class">
+                    {{ col.header }} 
+                    <i v-if="col.action" class="fa-solid fa-caret-down"></i>
+                </h2>
+                <h2 v-if="acciones?.action" :class="acciones.class">Acciones</h2>
             </div>
+
             <hr class="horizontal mt-2">
-            <div v-for="data in datosFiltrados" class="bodyTable grid grid-cols-[100px_1fr_1fr_1fr_1fr] grid-rows-1 p-2">
-                <p>{{ data.id }}</p>
-                <p>{{ data.Nombre }}</p>
-                <p>{{ data.Cliente }}</p>
-                <p>{{ data.Fecha }}</p>
-                <div class="flex items-center justify-center accionesTabla text-center gap-2">
-                <p v-for="action in data.Acciones" class="inline">
-                    <i v-if="action === 'ver'" class="fa-solid fa-eye btnActions bg-sky-600 text-xs"></i>
-                    <i v-else-if="action === 'actualizar'" class="fa-solid fa-pencil btnActions bg-[var(--color-naranja)] text-xs"></i>
-                    <i v-else-if="action === 'borrar'" class="fa-solid fa-trash btnActions bg-red-600 text-xs"></i>
-                </p>
+
+            <div v-for="(data, i) in datos.content" class="bodyTable grid p-2" :class="`grid-cols-${totalCols}`">
+
+                <div v-for="(col,i) in columnas" :class="col.class">
+                    <a v-if="col.link_url" :href="col.link_url" class="underline text-sky-900">
+                        {{ data[col.header] }}</a>
+                    <p v-else>{{ data[col.header] }}</p>
+                </div>
+                
+                <div v-if="acciones.action" class="flex items-center justify-center accionesTabla text-center gap-2"
+                    :class="acciones.class">
+                    <p v-for="action in acciones.icons" class="inline">
+                        <i v-if="action === 'ver'" class="fa-solid fa-eye btnActions bg-sky-600 text-xs"></i>
+                        <i v-else-if="action === 'actualizar'"
+                            class="fa-solid fa-pencil btnActions bg-[var(--color-naranja)] text-xs"></i>
+                        <i v-else-if="action === 'borrar'" class="fa-solid fa-trash btnActions bg-red-600 text-xs"></i>
+                    </p>
                 </div>
             </div>
         </div>
@@ -27,15 +34,29 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { usePaginador } from '../../stores/paginador';
-const paginador = usePaginador();
+import { defineProps, computed } from 'vue';
 
-const datosFiltrados = computed(() => paginador.datosPaginados);
+const props = defineProps({
+    columnas: {
+        type: [Array, String],
+        required: true,
+        default: ''
+    },
+    acciones: {
+        type: [Object, String],
+        default: ''
+    },
+    datos: {
+        type: [Object],
+        dafault: []
+    }
+});
 
-const tamaños = `grid-cols-[${primero}_${segundo}_${segundo}_${segundo}_${segundo}]`;
-const primero = '100px';
-const segundo = '1fr';
+const totalCols = computed(() => {
+    const baseCols = props.columnas.length
+    return props.acciones?.action ? baseCols + 1 : baseCols
+});
+
 </script>
 
 <style scoped>
