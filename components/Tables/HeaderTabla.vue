@@ -5,7 +5,7 @@
             {{ titulo }}
         </h1>
         <div class="flex gap-3 w-[50%] justify-end">
-            <InputBgGray placeholder="Filtrar por datos..." icon="fa-search" v-model="buscar"/>
+            <InputBgGray placeholder="Filtrar por datos..." icon="fa-search"/>
             <div class="flex gap-1 items-center">
                 <button class="btnAgregar text-white">
                     <i class="fa-solid fa-plus"></i>
@@ -22,7 +22,6 @@ import InputBgGray from '~/components/Inputs/InputBgGray.vue';
 import { defineProps } from 'vue';
 
 const props = defineProps(['titulo']);
-
 </script>
 
 <style scoped>

@@ -1,16 +1,14 @@
 <template>
     <div class="relative">
     <label>{{ label }}</label>
-    <input :placeholder="model" class="inputFondo" v-model="model"/>
+    <input :placeholder="placeholder" class="inputFondo" v-model="buscar"/>
     <i class="fa-solid iconInput text-gray-600" :class="icon"></i>
     </div>
 </template>
 
 <script setup>
-import { usePaginador } from '#imports';
-defineProps(['label','placeholder','icon','color','model']);
-const paginador = usePaginador();
-const model = defineModel();
+defineProps(['label','placeholder','icon','color']);
+
 </script>
 
 <style scoped>

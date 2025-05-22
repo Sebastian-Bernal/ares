@@ -1,24 +1,30 @@
+<script setup>
+
+</script>
+
 <template>
     <div class="paginador px-10">
-        <p class="text-sm text-gray-500">Registros {{ ultimaPagina - paginador.itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
-        
+        <p class="text-sm text-gray-500">
+            Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
+
         <div class="btnsPagina">
-            <button class="text-l p-2 text-white" @click="paginador.paginaAnterior()">
+            <button class="text-l p-2 text-white" @click="paginaAnterior()">
                 <i class="fa-solid fa-caret-left"></i>
             </button>
             <div class="flex gap-2 pagina">
-                <h2 v-if="paginador.paginaActual > 1">{{ paginador.paginaActual - 1 }}</h2>
-                <h2 class="bg-[var(--color-gray-200)] px-2 rounded">{{ paginador.paginaActual }}</h2>
-                <h2 v-if="paginador.paginaActual < paginador.totalPaginas">{{ paginador.paginaActual + 1 }}</h2>
+                <h2 v-if="paginaActual > 1">{{ paginaActual - 1 }}</h2>
+                <h2 class="bg-[var(--color-gray-200)] px-2 rounded">{{ paginaActual }}</h2>
+                <h2 v-if="paginaActual < totalPaginas">{{ paginaActual + 1 }}</h2>
             </div>
-            <button class="text-l p-2 text-white" @click="paginador.siguientePagina()">
+            <button class="text-l p-2 text-white" @click="siguientePagina()">
                 <i class="fa-solid fa-caret-right"></i>
             </button>
         </div>
-        
+
         <div class="flex gap-2 items-center">
             <p class="text-sm text-gray-500">Número de registros</p>
-            <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1" v-model.number="paginador.itemsPorPagina">
+            <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1"
+                v-model.number="itemsPorPagina">
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -27,13 +33,6 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { computed } from 'vue';
-import { usePaginador } from '../../stores/tabla';
-const paginador = usePaginador();
-const ultimaPagina = computed(() => paginador.itemsPorPagina* paginador.paginaActual);
-</script>
 
 <style scoped>
 .paginador {

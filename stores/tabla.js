@@ -3,21 +3,9 @@ import { defineStore } from "pinia";
 export const usePaginador = defineStore("tabla", {
     state: () => ({
         registros: [],
-        paginaActual: 1,
-        itemsPorPagina: 10,
     }),
 
     getters: {
-        totalPaginas(state) {
-            return Math.ceil(state.registros.length / state.itemsPorPagina);
-        },
-
-        datosPaginados(state) {
-            const inicio = (state.paginaActual - 1) * state.itemsPorPagina;
-            const fin = inicio + state.itemsPorPagina;
-            return state.registros.slice(inicio, fin);
-        },
-
         puedeAvanzar(state) {
             return (
                 state.paginaActual <
@@ -31,32 +19,51 @@ export const usePaginador = defineStore("tabla", {
     },
 
     actions: {
-        cambiarItemsPorPagina(value) {
-            this.itemsPorPagina = value;
-            this.paginaActual = 1;
-        },
-
-        siguientePagina() {
-            if (this.paginaActual < this.totalPaginas) {
-                this.paginaActual++;
-            }
-        },
-
-        paginaAnterior() {
-            if (this.paginaActual > 1) {
-                this.paginaActual--;
-            }
-        },
-
         setRegistros(data) {
             this.registros = data;
             this.paginaActual = 1;
         },
 
-        buscarDatos(value) {
-            this.registros.filter((data) => {
-                data.Cliente === value.toUpperCase()
-            })
-        },
+        // buscarDatos(valor) {
+        //     if (!valor || valor.trim() === "") {
+        //         this.registros = [...this.registrosOriginales];
+        //         return;
+        //     }
+
+        //     const texto = valor.toLowerCase();
+
+        //     const filtrados = this.registrosOriginales.filter(item =>
+        //         Object.values(item).some(val =>
+        //             String(val).toLowerCase().includes(texto)
+        //         )
+        //     );
+
+        //     this.registros = filtrados;
+        //     this.paginaActual = 1;
+        // },
+
+        buscarDatos(buscar) {
+            console.log(buscar)
+            if (buscar = '') {
+               let datosfiltrados = []
+               this.registros = datosfiltrados
+            } else {
+                const texto = buscar.toLowerCase()
+                const datosfiltrados = this.registrosOriginales.filter(item =>
+                    item.Cliente.includes(texto) ||
+                    item.id.includes(texto)
+                    // Object.values(item).some(val =>
+                    //     String(val).toLowerCase().includes(texto)
+                    // )
+                )
+                this.registros = datosfiltrados
+            }
+           
+
+        return this.registros
+       
+        }
+
+
     },
 });
