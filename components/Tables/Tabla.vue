@@ -1,8 +1,18 @@
 <script setup>
-import Paginador from './Paginador.vue';
-import { defineProps, computed, ref } from 'vue';
-const menorAMayor = ref(true);
+// importando los reursos
+import { defineProps, computed, ref, onMounted, onUnmounted, watch } from 'vue';
 
+// Definiendo variables
+let menorAMayor = ref(true);
+let columnaOrden = ref('')
+const paginaActual = ref(1);
+const itemsPorPagina = ref(10);
+const screenWidth = ref(0);
+const collapse = ref(false)
+let columnasVisibles = ref([]);
+let columnasSobrantes = ref([]);
+
+// funciones
 const props = defineProps({
     columnas: {
         type: [Array, String],
@@ -20,37 +30,67 @@ const props = defineProps({
     }
 });
 
-// function sortedItems(key, data) {
-//     if (menorAMayor.value) {
-//         return data.sort((a, b) => {
-//             if (typeof a[key] === 'number') {
-//                 console.log(a[key] - b[key])
-//                 return a[key] - b[key]
-//             } else {
-//                 return a[key].localeCompare(b[key])
-//             }
-//         })
-//     } else {
-//         return data.sort((a, b) => {
-//             if (typeof a[key] === 'number') {
-//                 return b[key] - a[key]
-//             } else {
-//                 return b[key].localeCompare(a[key])
-//             }
-//         })
-//     }
-//     const menorAMayor = !menorAMayor;
-// }
+// tamaño de pantalla
+function updateWidth() {
+    if (typeof window !== 'undefined') {
+        screenWidth.value = window.innerWidth;
+    }
+}
+
+onMounted(() => {
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateWidth);
+});
+
+
+watch(() => {
+    let acumulado = 0;
+
+    for (let columna in props.columnas) {
+        acumulado += columna.tamaño;
+        if (acumulado <= screenWidth.value) {
+            columnasVisibles.value.push(columna);
+        } else {
+            columnasSobrantes.value.push(columna);
+        }
+    }
+
+    // Puedes actualizar aquí el estado de colapso si lo deseas
+    collapse.value = columnasSobrantes.length > 0;
+
+});
+
+console.log(columnasSobrantes.value, columnasVisibles.value)
+
+
+// Acomodar datos de menor a mayor
+const sortedItems = (valorColumna, data) => {
+    if (valorColumna.value !== '') {
+        return [...data].sort((a, b) => {
+            if (typeof a[valorColumna] === 'number') {
+                return menorAMayor.value ? a[valorColumna] - b[valorColumna] : b[valorColumna] - a[valorColumna]
+            } else {
+                return menorAMayor.value ? a[valorColumna].localeCompare(b[valorColumna]) : b[valorColumna].localeCompare(a[valorColumna])
+            }
+        })
+        menorAMayor = !menorAMayor.value
+    }
+};
+
 
 // Paginador
-const paginaActual = ref(1);
-const itemsPorPagina = ref(10);
-
 const ultimaPagina = computed(() => itemsPorPagina.value * paginaActual.value);
+let totalPaginas = Math.ceil(props.datos.content.length / itemsPorPagina.value);
 
-const cambiarItemsPorPagina = (value) => {
-    itemsPorPagina = value;
-    paginaActual = 1;
+// Funciones del paginador
+const cambiarItemsPorPagina = (event) => {
+    itemsPorPagina.value = event.target.value;
+    paginaActual.value = 1;
+    totalPaginas = Math.ceil(props.datos.content.length / itemsPorPagina.value)
 };
 
 const siguientePagina = () => {
@@ -65,120 +105,105 @@ const paginaAnterior = () => {
     }
 };
 
-const totalPaginas =  Math.ceil(props.datos.content.length / itemsPorPagina.value);
-
+// Datos que recorre la tabla
 const datosFiltrados = computed(() => {
+
     const inicio = (paginaActual.value - 1) * itemsPorPagina.value;
     const fin = inicio + itemsPorPagina.value;
     return props.datos.content.slice(inicio, fin)
 });
 
-const totalCols = computed(() => {
-    const baseCols = props.columnas.length
-    return props.acciones?.action ? baseCols + 1 : baseCols
+// Grid numero de columnas
+const numeroColumnas = computed(() => {
+    const numeroColumnas = Object.keys(props.datos.content[0]).length;
+    return props.acciones?.action ? numeroColumnas + 1 : numeroColumnas
 });
 
 </script>
 
 <template>
-    <div class="section-tablas">
-        
-    <div class="containerTable">
-        <div class="table">
-            <div class="headTable grid p-2 text-xs font-bold text-wrap" :class="`grid-cols-${totalCols}`">
-                <h2 v-for="col in columnas" :class="col.class">
-                    {{ col.header }}
-                    <i v-if="col.action" class="fa-solid fa-caret-down"
-                        @click="sortedItems(col.key, props.datos.content)"></i>
-                </h2>
-                <h2 v-if="acciones?.action" :class="acciones.class">Acciones</h2>
-            </div>
+    <div class="h-[85%]">
 
-            <hr class="horizontal mt-2">
-
-            <div v-for="(data, i) in datosFiltrados" class="bodyTable grid p-2" :class="`grid-cols-${totalCols}`">
-
-                <div v-for="(col, i) in columnas" :class="col.class">
-                    <a v-if="col.link_url" :href="col.link_url" class="underline text-sky-900">
-                        {{ data[col.key] }}</a>
-                    <p v-else>{{ data[col.key] }}</p>
+        <div class="m-[20px] h-[80%] overflow-y-scroll containerTable">
+            <div class="w-full">
+                <!-- Header -->
+                <div class="grid p-2 text-xs font-bold rounded-t-xl text-center text-[var(--color-naranja)]"
+                    :class="`grid-cols-${numeroColumnas}`">
+                    <h2 v-for="(col, key) in datosFiltrados[0]" :class="col.class">
+                        {{ key }}
+                        <i v-if="col.action" class="fa-solid fa-caret-down" @click="columnaOrden = key"></i>
+                    </h2>
+                    <h2 v-if="acciones?.action" :class="acciones.class">Acciones</h2>
                 </div>
 
-                <div v-if="acciones.action" class="flex items-center justify-center accionesTabla text-center gap-2"
-                    :class="acciones.class">
-                    <p v-for="action in acciones.icons" class="inline">
-                        <i v-if="action === 'ver'" class="fa-solid fa-eye btnActions bg-sky-600 text-xs"></i>
-                        <i v-else-if="action === 'actualizar'"
-                            class="fa-solid fa-pencil btnActions bg-[var(--color-naranja)] text-xs"></i>
-                        <i v-else-if="action === 'borrar'" class="fa-solid fa-trash btnActions bg-red-600 text-xs"></i>
-                    </p>
+                <hr class="horizontal mt-2">
+                <!-- Body -->
+                <div v-for="data in datosFiltrados" class="bodyTable grid p-2 text-center"
+                    :class="`grid-cols-${numeroColumnas}`">
+
+                    <div v-for="(value, key) in data">
+                        <p>{{ data[key] }}</p>
+                    </div>
+
+                    <!-- <div v-for="col in columnas" :class="col.class">
+                        <a v-if="col.link_url" :href="col.link_url" class="underline text-sky-900">
+                            {{ data[col.valorColumna] }}
+                        </a>
+                        <p v-else>{{ data[col.valorColumna] }}</p>
+                    </div> -->
+
+                    <div v-if="acciones.action" class="flex items-center justify-center accionesTabla text-center gap-2"
+                        :class="acciones.class">
+                        <p v-for="action in acciones.icons" class="inline">
+                            <i v-if="action === 'ver'" class="fa-solid fa-eye btnActions bg-sky-600 text-xs"></i>
+                            <i v-else-if="action === 'actualizar'"
+                                class="fa-solid fa-pencil btnActions bg-[var(--color-naranja)] text-xs"></i>
+                            <i v-else-if="action === 'borrar'"
+                                class="fa-solid fa-trash btnActions bg-red-600 text-xs"></i>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Paginador -->
+        <div class="paginador px-10">
+            <p class="text-sm text-gray-500">
+                Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
 
-    <div class="paginador px-10">
-        <p class="text-sm text-gray-500">
-            Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
-
-        <div class="btnsPagina">
-            <button class="text-l p-2 text-white" @click="paginaAnterior()">
-                <i class="fa-solid fa-caret-left"></i>
-            </button>
-            <div class="flex gap-2 pagina">
-                <h2 v-if="paginaActual > 1">{{ paginaActual - 1 }}</h2>
-                <h2 class="bg-[var(--color-gray-200)] px-2 rounded">{{ paginaActual }}</h2>
-                <h2 v-if="paginaActual < totalPaginas">{{ paginaActual + 1 }}</h2>
+            <div class="btnsPagina">
+                <button class="text-l p-2 text-white" @click="paginaAnterior()">
+                    <i class="fa-solid fa-caret-left"></i>
+                </button>
+                <div class="flex gap-2 pagina">
+                    <h2 v-if="paginaActual > 1">{{ paginaActual - 1 }}</h2>
+                    <h2 class="bg-[var(--color-gray-200)] px-2 rounded">{{ paginaActual }}</h2>
+                    <h2 v-if="paginaActual < totalPaginas">{{ paginaActual + 1 }}</h2>
+                </div>
+                <button class="text-l p-2 text-white" @click="siguientePagina()">
+                    <i class="fa-solid fa-caret-right"></i>
+                </button>
             </div>
-            <button class="text-l p-2 text-white" @click="siguientePagina()">
-                <i class="fa-solid fa-caret-right"></i>
-            </button>
-        </div>
 
-        <div class="flex gap-2 items-center">
-            <p class="text-sm text-gray-500">Número de registros</p>
-            <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1"
-                v-model.number="itemsPorPagina">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-            </select>
+            <div class="flex gap-2 items-center">
+                <p class="text-sm text-gray-500">Número de registros</p>
+                <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1"
+                    @change="cambiarItemsPorPagina($event)">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
         </div>
-    </div>
     </div>
 </template>
 
 
 
 <style scoped>
-.section-tablas {
-    height: 85%;
-}
-
-.containerTable {
-    margin: 20px;
-    height: 80%;
-    overflow-y: scroll;
-}
-
 .containerTable::-webkit-scrollbar {
     display: none;
-}
-
-.headTable {
-    border-radius: 10px 10px 0 0;
-    text-align: center;
-    color: var(--color-naranja);
-}
-
-.headTable h2 i:hover {
-    color: var(--color-rojo-suave);
-}
-
-.bodyTable {
-    text-align: center;
 }
 
 .bodyTable:nth-child(even) {
@@ -187,18 +212,12 @@ const totalCols = computed(() => {
 
 .bodyTable:hover:nth-child(even) {
     background-color: var(--color-gris);
+    color: var(--color-blanco);
 }
 
 .bodyTable:hover {
     background-color: var(--color-gris);
-}
-
-.table {
-    width: 100%;
-}
-
-.horizontal {
-    color: var(--color-gris);
+    color: var(--color-blanco);
 }
 
 .btnActions {
@@ -245,5 +264,9 @@ const totalCols = computed(() => {
 
 .pagina {
     color: var(--color-rojo-oscuro);
+}
+
+.horizontal {
+    color: var(--color-gris);
 }
 </style>
