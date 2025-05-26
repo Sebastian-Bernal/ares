@@ -75,6 +75,39 @@ export const datosUser = {
     ]
 };
 
+export const datosCollapse = [
+        {
+            identifier: 6,
+            username: "Berth toy",
+            email_adress: "ucassin@example.org",
+            identification_number: "456789",
+            identifier2: 66,
+            username2: "Berth toy story",
+            email_adress2: "ucassin2@example.com",
+            identification_number2: "456789",
+        },
+        {
+            identifier: 6,
+            username: "Berth toy",
+            email_adress: "ucassin@example.org",
+            identification_number: "456789",
+            identifier2: 6,
+            username2: "juann",
+            email_adress2: "ucassin@example.org",
+            identification_number2: "456789",
+        },
+        {
+            identifier: 6,
+            username: "Berth toy",
+            email_adress: "ucassin@example.org",
+            identification_number: "456789",
+            identifier2: 6,
+            username2: "Berth toy",
+            email_adress2: "ucassin@example.org",
+            identification_number2: "456789",
+        },
+];
+
 export const datosTabla = [
     {
         id: "983",

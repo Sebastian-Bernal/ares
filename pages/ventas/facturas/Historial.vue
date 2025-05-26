@@ -1,10 +1,25 @@
 <script setup>
 import HeaderTabla from '~/components/Tables/HeaderTabla.vue';
 import Tabla from '~/components/Tables/Tabla.vue';
-import { datosTabla, datosUser } from '~/data/TablaVenta';
-import { usuariosTabla } from '~/data/datosUsuario';
+// import { datosTabla, datosUser, datosCollapse } from '~/data/TablaVenta';
+// import { usuariosTabla } from '~/data/datosUsuario';
+import { onMounted, ref } from 'vue';
+import { traerUsuarios } from '../../../stores/productos.js';
+import { useApiRest } from '../../stores/apiRest.js';
 
+const usuarios = ref([]);
+const loader = useApiRest();
 
+onMounted(() => {
+    usarTraerUsuarios();
+});
+
+const usarTraerUsuarios = async () => {
+    loader.cargando = true;
+    const data = await traerUsuarios();
+    usuarios.value = data;
+    loader.cargando = false;
+};
 </script>
 
 <template>
@@ -12,21 +27,16 @@ import { usuariosTabla } from '~/data/datosUsuario';
         <HeaderTabla titulo="Historial De Ventas" action="buscar" />
         <Tabla 
             :columnas="[
-                {tamaño: 100, titulo: 'columna'},
-                {tamaño: 100, titulo: 'columna'},
-                {tamaño: 100, titulo: 'columna'},
-                {tamaño: 100, titulo: 'columna'},
-                {tamaño: 100, titulo: 'columna'},
-                {tamaño: 100, titulo: 'columna'},
-                {tamaño: 100, titulo: 'columna'},
-                {tamaño: 100, titulo: 'columna'},
-                {tamaño: 100, titulo: 'columna'},
+                {tamaño: 100, titulo: 'id'},
+                {tamaño: 150, titulo: 'firstname'},
+                {tamaño: 200, titulo: 'lastname'},
+                {tamaño: 200, titulo: 'email'},
+                {tamaño: 200, titulo: 'phone'},
+                {tamaño: 150, titulo: 'gender'},
+                {tamaño: 250, titulo: 'website'},
+                {tamaño: 150, titulo: 'birthday'},
             ]"
-            :firsth="{tamaño: '200px'}"
-            :second="{tamaño: '200px'}"
-            :third="{ tamaño: '200px'}"
-            :fourth="{ tamaño: '200px'}"
-            :acciones="{ action: true, icons: ['ver', 'actualizar', 'borrar'], class: 'col-span-1' }"
-            :datos="{content: usuariosTabla}" />
+            :acciones="{ action: true, icons: ['ver', 'actualizar', 'borrar'], tamaño: 100 }"
+            :datos="{content: usuarios}" />
     </div>
 </template>

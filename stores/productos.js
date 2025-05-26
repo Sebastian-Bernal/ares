@@ -8,3 +8,14 @@ export const traerProductos = async () => {
         console.error('Error:', error);
     }
 }
+
+export const traerUsuarios = async () => {
+    try {
+        const response = await fetch('https://fakerapi.it/api/v2/persons?_quantity=20');
+        const data = await response.json();
+        const usuarios = data.data
+        return usuarios;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}

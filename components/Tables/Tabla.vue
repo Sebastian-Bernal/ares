@@ -4,13 +4,15 @@ import { defineProps, computed, ref, onMounted, onUnmounted, watch } from 'vue';
 
 // Definiendo variables
 let menorAMayor = ref(true);
-let columnaOrden = ref('')
+let columnaOrden = ref('');
 const paginaActual = ref(1);
 const itemsPorPagina = ref(10);
+
 const screenWidth = ref(0);
-const collapse = ref(false)
-let columnasVisibles = ref([]);
-let columnasSobrantes = ref([]);
+let collapse = ref(false);
+const columnasVisibles = ref([]);
+const columnasSobrantes = ref([]);
+const columnas = ref({})
 
 // funciones
 const props = defineProps({
@@ -35,7 +37,7 @@ function updateWidth() {
     if (typeof window !== 'undefined') {
         screenWidth.value = window.innerWidth;
     }
-}
+};
 
 onMounted(() => {
     updateWidth();
@@ -46,40 +48,48 @@ onUnmounted(() => {
     window.removeEventListener('resize', updateWidth);
 });
 
-
+// Columnas visibles y sobrantes
 watch(() => {
     let acumulado = 0;
 
+    columnasVisibles.value = [];
+    columnasSobrantes.value = [];
+
     for (let columna in props.columnas) {
-        acumulado += columna.tamaño;
-        if (acumulado <= screenWidth.value) {
-            columnasVisibles.value.push(columna);
-        } else {
-            columnasSobrantes.value.push(columna);
+        acumulado += parseInt(props.columnas[columna].tamaño);
+        if (acumulado <= screenWidth.value - 200) { // Restamos 200px para el espacio de acciones y márgenes
+            columnasVisibles.value.push(props.columnas[columna]);
+        } else if (acumulado > screenWidth.value - 200) {
+            columnasSobrantes.value.push(props.columnas[columna]);
         }
     }
 
-    // Puedes actualizar aquí el estado de colapso si lo deseas
-    collapse.value = columnasSobrantes.length > 0;
+    console.log('columnasVisibles', columnas.value);
 
+    // Si hay columnas sobrantes, se activa el colapso
+    collapse.value = columnasSobrantes.length > 0;
 });
 
-console.log(columnasSobrantes.value, columnasVisibles.value)
-
-
-// Acomodar datos de menor a mayor
-const sortedItems = (valorColumna, data) => {
-    if (valorColumna.value !== '') {
-        return [...data].sort((a, b) => {
-            if (typeof a[valorColumna] === 'number') {
-                return menorAMayor.value ? a[valorColumna] - b[valorColumna] : b[valorColumna] - a[valorColumna]
-            } else {
-                return menorAMayor.value ? a[valorColumna].localeCompare(b[valorColumna]) : b[valorColumna].localeCompare(a[valorColumna])
-            }
-        })
-        menorAMayor = !menorAMayor.value
+const activarCollapse = (id) => {
+    const collapseElement = document.getElementById(id);
+    if (collapseElement) {
+        collapseElement.classList.toggle('collapseActive');
     }
 };
+
+// Acomodar datos de menor a mayor
+// const sortedItems = (valorColumna, data) => {
+//     if (valorColumna.value !== '') {
+//         return [...data].sort((a, b) => {
+//             if (typeof a[valorColumna] === 'number') {
+//                 return menorAMayor.value ? a[valorColumna] - b[valorColumna] : b[valorColumna] - a[valorColumna]
+//             } else {
+//                 return menorAMayor.value ? a[valorColumna].localeCompare(b[valorColumna]) : b[valorColumna].localeCompare(a[valorColumna])
+//             }
+//         })
+//         menorAMayor = !menorAMayor.value
+//     }
+// };
 
 
 // Paginador
@@ -113,10 +123,17 @@ const datosFiltrados = computed(() => {
     return props.datos.content.slice(inicio, fin)
 });
 
-// Grid numero de columnas
-const numeroColumnas = computed(() => {
-    const numeroColumnas = Object.keys(props.datos.content[0]).length;
-    return props.acciones?.action ? numeroColumnas + 1 : numeroColumnas
+// Tamaño numero de columnas
+const estiloColumnas = computed(() => {
+    if (!columnasVisibles.value || columnasVisibles.value.length === 0) return {};
+
+    const tamaños = columnasVisibles.value
+        .map(col => col.tamaño && !isNaN(col.tamaño) ? `${col.tamaño}px` : '100px')
+        .join(' ');
+
+    return {
+        gridTemplateColumns: `${tamaños}${props.acciones.action ? ' 100px' : ''}`
+    };
 });
 
 </script>
@@ -128,51 +145,62 @@ const numeroColumnas = computed(() => {
             <div class="w-full">
                 <!-- Header -->
                 <div class="grid p-2 text-xs font-bold rounded-t-xl text-center text-[var(--color-naranja)]"
-                    :class="`grid-cols-${numeroColumnas}`">
-                    <h2 v-for="(col, key) in datosFiltrados[0]" :class="col.class">
+                    :style="estiloColumnas">
+                    <!-- <h2 v-for="(col, key) in datosFiltrados[0]" :class="col.class">
                         {{ key }}
                         <i v-if="col.action" class="fa-solid fa-caret-down" @click="columnaOrden = key"></i>
+                    </h2> -->
+                    <h2 v-for="col in columnasVisibles" :style="{ width: `${col.tamaño}px`, minWidth: '100px' }">
+                        {{ col.titulo }}
                     </h2>
                     <h2 v-if="acciones?.action" :class="acciones.class">Acciones</h2>
                 </div>
 
                 <hr class="horizontal mt-2">
+
                 <!-- Body -->
-                <div v-for="data in datosFiltrados" class="bodyTable grid p-2 text-center"
-                    :class="`grid-cols-${numeroColumnas}`">
+                <div v-for="(data, id) in datosFiltrados" class="bodyTable grid p-2 text-center"
+                    :style="estiloColumnas">
 
-                    <div v-for="(value, key) in data">
-                        <p>{{ data[key] }}</p>
-                    </div>
-
-                    <!-- <div v-for="col in columnas" :class="col.class">
-                        <a v-if="col.link_url" :href="col.link_url" class="underline text-sky-900">
+                    <div v-for="col in columnasVisibles" :style="{ width: `${col.tamaño}px`, minWidth: '100px' }">
+                        <!-- <a v-if="col.link_url" :href="col.link_url" class="underline text-sky-900">
                             {{ data[col.valorColumna] }}
-                        </a>
-                        <p v-else>{{ data[col.valorColumna] }}</p>
-                    </div> -->
+                        </a> -->
+                        <p>{{ data[col.titulo] }}</p>
+                    </div>
 
                     <div v-if="acciones.action" class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="acciones.class">
-                        <p v-for="action in acciones.icons" class="inline">
-                            <i v-if="action === 'ver'" class="fa-solid fa-eye btnActions bg-sky-600 text-xs"></i>
+                        <p v-if="collapse.value" v-for="action in acciones.icons" class="inline">
+                            <i v-if="action === 'ver'" class="fa-solid fa-eye btnActions hover:opacity-75 bg-sky-600 text-xs"></i>
                             <i v-else-if="action === 'actualizar'"
                                 class="fa-solid fa-pencil btnActions bg-[var(--color-naranja)] text-xs"></i>
                             <i v-else-if="action === 'borrar'"
                                 class="fa-solid fa-trash btnActions bg-red-600 text-xs"></i>
                         </p>
+
+                        <div class="flex align-center">
+                            <i @click="activarCollapse(id)" data-collapse-target="collapse-${id}"
+                                class="fa-solid fa-plus"></i>
+                        </div>
+                    </div>
+                    <div class="collapse-text" :id="id" data-collapse=´collapse-${id}´>
+                        <h2 v-for="col in columnasSobrantes" class="text-xs">
+                            {{ data[col.titulo] }}
+                        </h2>
                     </div>
                 </div>
+
             </div>
         </div>
 
         <!-- Paginador -->
-        <div class="paginador px-10">
+        <div class="mt-[10px] flex justify-between items-center h-[30px] px-10">
             <p class="text-sm text-gray-500">
                 Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
 
-            <div class="btnsPagina">
-                <button class="text-l p-2 text-white" @click="paginaAnterior()">
+            <div class="btnsPagina flex items-center gap-5">
+                <button class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full" @click="paginaAnterior()">
                     <i class="fa-solid fa-caret-left"></i>
                 </button>
                 <div class="flex gap-2 pagina">
@@ -180,7 +208,7 @@ const numeroColumnas = computed(() => {
                     <h2 class="bg-[var(--color-gray-200)] px-2 rounded">{{ paginaActual }}</h2>
                     <h2 v-if="paginaActual < totalPaginas">{{ paginaActual + 1 }}</h2>
                 </div>
-                <button class="text-l p-2 text-white" @click="siguientePagina()">
+                <button class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full" @click="siguientePagina()">
                     <i class="fa-solid fa-caret-right"></i>
                 </button>
             </div>
@@ -221,7 +249,6 @@ const numeroColumnas = computed(() => {
 }
 
 .btnActions {
-    float: left;
     border: none;
     color: white;
     text-align: center;
@@ -232,33 +259,21 @@ const numeroColumnas = computed(() => {
     border-radius: 50%;
 }
 
-.btnActions:hover {
-    opacity: .7;
+.collapse-text {
+    display: none;
+    padding: 10px;
+    border-radius: 10px;
+    pointer-events: none;
+    gap: 15px;
 }
 
-
-.paginador {
-    margin-top: 10px;
+.collapseActive {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 30px;
-    color: var(--color--negro);
 }
 
-.btnsPagina {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
 
+/* Paginador css */
 .btnsPagina button {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
     background: linear-gradient(to left, var(--color-negro-rojizo), var(--color-rojo));
 }
 
