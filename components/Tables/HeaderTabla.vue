@@ -1,11 +1,11 @@
 <template>
     <div class="flex w-[100%] justify-between items-cent px-10 mt-5 md:flex-row flex-col gap-3">
 
-        <h1 class="font-bold text-2xl tituloTabla">
+        <h1 class="font-bold text-2xl tituloTabla text-gray-800">
             {{ titulo }}
         </h1>
         <div class="flex gap-3 w-[50%] justify-end">
-            <InputBgGray placeholder="Filtrar por datos..." icon="fa-search"/>
+            <InputBgGray placeholder="Buscar por datos..." icon="fa-search"/>
             <div class="flex gap-1 items-center">
                 <button class="btnAgregar text-white">
                     <i class="fa-solid fa-plus"></i>
@@ -25,11 +25,6 @@ const props = defineProps(['titulo']);
 </script>
 
 <style scoped>
-.tituloTabla {
-    color: var(--color-rojo);
-    text-shadow: 5px 5px 4px var(--color-gris);
-}
-
 .btnAgregar {
     width: 30px;
     height: 30px;

@@ -16,7 +16,7 @@ defineProps(['label','placeholder','icon','color']);
     padding: 5px 10px 5px 35px;
     border-radius: 10px;
     width: 100%;
-    background-color: var(--color-rojo-claro-trp5);
+    background-color: var(--color-gray-200);
 }
 
 .iconInput {

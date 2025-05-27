@@ -36,7 +36,7 @@ const usarTraerUsuarios = async () => {
                 {tamaño: 250, titulo: 'website'},
                 {tamaño: 150, titulo: 'birthday'},
             ]"
-            :acciones="{ action: true, icons: ['ver', 'actualizar', 'borrar'], tamaño: 100 }"
+            :acciones="{ botones: true, icons: ['ver', 'actualizar', 'borrar'], tamaño: 100 }"
             :datos="{content: usuarios}" />
     </div>
 </template>

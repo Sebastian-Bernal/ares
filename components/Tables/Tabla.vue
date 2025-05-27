@@ -1,7 +1,7 @@
 <script setup>
 // importando los reursos
 import { defineProps, computed, ref, onMounted, onUnmounted, watch } from 'vue';
-
+import BotonAccion from './BotonAccion.vue';
 // Definiendo variables
 let menorAMayor = ref(true);
 let columnaOrden = ref('');
@@ -9,10 +9,9 @@ const paginaActual = ref(1);
 const itemsPorPagina = ref(10);
 
 const screenWidth = ref(0);
-let collapse = ref(false);
+const collapse = ref(false);
 const columnasVisibles = ref([]);
 const columnasSobrantes = ref([]);
-const columnas = ref({})
 
 // funciones
 const props = defineProps({
@@ -55,25 +54,36 @@ watch(() => {
     columnasVisibles.value = [];
     columnasSobrantes.value = [];
 
-    for (let columna in props.columnas) {
-        acumulado += parseInt(props.columnas[columna].tamaño);
+    props.columnas.forEach((col) => {
+        acumulado += col.tamaño;
         if (acumulado <= screenWidth.value - 200) { // Restamos 200px para el espacio de acciones y márgenes
-            columnasVisibles.value.push(props.columnas[columna]);
-        } else if (acumulado > screenWidth.value - 200) {
-            columnasSobrantes.value.push(props.columnas[columna]);
+            columnasVisibles.value.push(col);
+        } else {
+            columnasSobrantes.value.push(col);
         }
-    }
-
-    console.log('columnasVisibles', columnas.value);
+    });
 
     // Si hay columnas sobrantes, se activa el colapso
-    collapse.value = columnasSobrantes.length > 0;
+    collapse.value = columnasSobrantes.value.length > 0;
+    console.log(collapse.value)
 });
 
+// Collapse activo
 const activarCollapse = (id) => {
     const collapseElement = document.getElementById(id);
-    if (collapseElement) {
-        collapseElement.classList.toggle('collapseActive');
+
+    if (!collapseElement) return;
+
+    const yaActivo = collapseElement.classList.contains('collapseActive');
+
+    // Cierra todos los elementos activos
+    document.querySelectorAll('.collapseActive').forEach(el => {
+        el.classList.remove('collapseActive');
+    });
+
+    // Si no estaba activo, lo activamos (si ya lo estaba, lo dejamos cerrado)
+    if (!yaActivo) {
+        collapseElement.classList.add('collapseActive');
     }
 };
 
@@ -132,61 +142,58 @@ const estiloColumnas = computed(() => {
         .join(' ');
 
     return {
-        gridTemplateColumns: `${tamaños}${props.acciones.action ? ' 100px' : ''}`
+        gridTemplateColumns: `${tamaños}${props.acciones.botones ? ' 100px' : ''}`
     };
 });
 
 </script>
 
 <template>
-    <div class="h-[85%]">
+    <div class="h-[88%]">
 
-        <div class="m-[20px] h-[80%] overflow-y-scroll containerTable">
-            <div class="w-full">
-                <!-- Header -->
-                <div class="grid p-2 text-xs font-bold rounded-t-xl text-center text-[var(--color-naranja)]"
+        <div class="m-[20px] h-[80%] overflow-y-scroll containerTable shadow ">
+            <div class="w-full ">
+
+                <!-- Header titulos de props Columnas -->
+                <div class="grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white bg-[var(--color-rojo-oscuro)]"
                     :style="estiloColumnas">
-                    <!-- <h2 v-for="(col, key) in datosFiltrados[0]" :class="col.class">
-                        {{ key }}
-                        <i v-if="col.action" class="fa-solid fa-caret-down" @click="columnaOrden = key"></i>
-                    </h2> -->
-                    <h2 v-for="col in columnasVisibles" :style="{ width: `${col.tamaño}px`, minWidth: '100px' }">
+                    <h2 v-for="col in columnasVisibles" :key="col.titulo"
+                        :style="{ width: `${col.tamaño}px`, minWidth: '100px' }">
                         {{ col.titulo }}
                     </h2>
-                    <h2 v-if="acciones?.action" :class="acciones.class">Acciones</h2>
+                    <h2 v-if="acciones.botones" :class="acciones.class">Acciones</h2>
                 </div>
 
-                <hr class="horizontal mt-2">
+                <hr class="horizontal">
 
                 <!-- Body -->
-                <div v-for="(data, id) in datosFiltrados" class="bodyTable grid p-2 text-center"
+                <div v-for="(fila, id) in datosFiltrados" class="bodyTable justify-between grid p-2 text-center"
                     :style="estiloColumnas">
 
-                    <div v-for="col in columnasVisibles" :style="{ width: `${col.tamaño}px`, minWidth: '100px' }">
-                        <!-- <a v-if="col.link_url" :href="col.link_url" class="underline text-sky-900">
-                            {{ data[col.valorColumna] }}
-                        </a> -->
-                        <p>{{ data[col.titulo] }}</p>
+                    <div v-for="(col, key) in columnasVisibles" :key="key"
+                        :style="{ width: `${col.tamaño}px`, minWidth: '100px' }">
+                        <p class="text-black">{{ fila[col.titulo] }}</p>
                     </div>
-
-                    <div v-if="acciones.action" class="flex items-center justify-center accionesTabla text-center gap-2"
+                    <!-- Acciones -->
+                    <div v-if="acciones.botones" class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="acciones.class">
-                        <p v-if="collapse.value" v-for="action in acciones.icons" class="inline">
-                            <i v-if="action === 'ver'" class="fa-solid fa-eye btnActions hover:opacity-75 bg-sky-600 text-xs"></i>
-                            <i v-else-if="action === 'actualizar'"
-                                class="fa-solid fa-pencil btnActions bg-[var(--color-naranja)] text-xs"></i>
-                            <i v-else-if="action === 'borrar'"
-                                class="fa-solid fa-trash btnActions bg-red-600 text-xs"></i>
-                        </p>
-
-                        <div class="flex align-center">
-                            <i @click="activarCollapse(id)" data-collapse-target="collapse-${id}"
-                                class="fa-solid fa-plus"></i>
-                        </div>
+                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" :tipo="action"
+                            @accion="handleAccion" />
+                        
+                        <button @click="activarCollapse(id)" v-if="collapse"
+                            class="flex items-center justify-center bg-gray-300 w-[24px] h-[24px] text-white rounded-full">
+                            <i class="fa-solid fa-plus text-gray-600"></i>
+                        </button>
+                        <button class="flex items-center justify-center bg-gray-300 w-[24px] h-[24px] text-white rounded-full">
+                            <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
+                        </button>
                     </div>
-                    <div class="collapse-text" :id="id" data-collapse=´collapse-${id}´>
-                        <h2 v-for="col in columnasSobrantes" class="text-xs">
-                            {{ data[col.titulo] }}
+
+                    <!-- collapse -->
+                    <div class="collapse-text col-span-full" :id="id">
+                        <h2 v-for="(col, key) in columnasSobrantes" class="col-4">
+                            <p class="text-[var(--color-naranja)] text-xs mb-2">{{ col.titulo }}</p>
+                            {{ fila[col.titulo] }}
                         </h2>
                     </div>
                 </div>
@@ -199,16 +206,18 @@ const estiloColumnas = computed(() => {
             <p class="text-sm text-gray-500">
                 Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
 
-            <div class="btnsPagina flex items-center gap-5">
-                <button class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full" @click="paginaAnterior()">
+            <div class="btnsPagina flex items-center gap-3">
+                <button v-if="paginaActual > 1" class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full"
+                    @click="paginaAnterior()">
                     <i class="fa-solid fa-caret-left"></i>
                 </button>
                 <div class="flex gap-2 pagina">
-                    <h2 v-if="paginaActual > 1">{{ paginaActual - 1 }}</h2>
-                    <h2 class="bg-[var(--color-gray-200)] px-2 rounded">{{ paginaActual }}</h2>
-                    <h2 v-if="paginaActual < totalPaginas">{{ paginaActual + 1 }}</h2>
+                    <h2 v-if="paginaActual > 1" class="text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">{{ paginaActual - 1 }}</h2>
+                    <h2 class="bg-[var(--color-gray-200)] text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">{{ paginaActual }}</h2>
+                    <h2 v-if="paginaActual < totalPaginas" class="text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">{{ paginaActual + 1 }}</h2>
                 </div>
-                <button class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full" @click="siguientePagina()">
+                <button class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full"
+                    @click="siguientePagina()">
                     <i class="fa-solid fa-caret-right"></i>
                 </button>
             </div>
@@ -261,24 +270,22 @@ const estiloColumnas = computed(() => {
 
 .collapse-text {
     display: none;
-    padding: 10px;
+    margin-top: 10px;
     border-radius: 10px;
     pointer-events: none;
     gap: 15px;
+    justify-content: space-evenly;
 }
 
 .collapseActive {
     display: flex;
+    pointer-events: all;
 }
 
 
 /* Paginador css */
 .btnsPagina button {
     background: linear-gradient(to left, var(--color-negro-rojizo), var(--color-rojo));
-}
-
-.pagina {
-    color: var(--color-rojo-oscuro);
 }
 
 .horizontal {
