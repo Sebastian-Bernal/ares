@@ -7,7 +7,7 @@
         <div class="flex gap-3 w-[50%] justify-end">
             <InputBgGray placeholder="Buscar por datos..." icon="fa-search"/>
             <div class="flex gap-1 items-center">
-                <button class="btnAgregar text-white">
+                <button class="text-white w-[30px] h-[30px] rounded-full bg-[var(--color-primary)] hover:opacity-75">
                     <i class="fa-solid fa-plus"></i>
                 </button>
                 <h4>Agregar</h4>
@@ -23,16 +23,3 @@ import { defineProps } from 'vue';
 
 const props = defineProps(['titulo']);
 </script>
-
-<style scoped>
-.btnAgregar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: var(--color-primary);
-}
-
-.btnAgregar:hover {
-    opacity: .8;
-}
-</style>

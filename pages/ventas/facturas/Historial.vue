@@ -24,12 +24,11 @@ const usarTraerUsuarios = async () => {
 
 <template>
     <div class="w-full h-full bg-[var(--color-blanco)] rounded-2xl py-2">
-        <HeaderTabla titulo="Historial De Ventas" action="buscar" />
-        <Tabla 
+        <Tabla :headerTabla="{titulo: 'Historial Ventas', acciones: 'buscar'}"
             :columnas="[
-                {tamaño: 100, titulo: 'id'},
+                {tamaño: 100, titulo: 'id', ordenar: true},
                 {tamaño: 150, titulo: 'firstname'},
-                {tamaño: 200, titulo: 'lastname'},
+                {tamaño: 200, titulo: 'lastname', ordenar: true},
                 {tamaño: 200, titulo: 'email'},
                 {tamaño: 200, titulo: 'phone'},
                 {tamaño: 150, titulo: 'gender'},

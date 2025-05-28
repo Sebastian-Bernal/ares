@@ -1,15 +1,21 @@
 <script setup>
 // importando los reursos
-import { defineProps, computed, ref, watch } from 'vue';
+import { defineProps, computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import BotonAccion from './BotonAccion.vue';
 import InputBgGray from '../Inputs/InputBgGray.vue';
 
-import { usePaginacion } from '../../composables/usePaginacion.js'
-import { useColumnasResponsivas } from '../../composables/useTablasResponsive';
-import { useOrdenamiento } from '../../composables/useDatosOrdenadosTabla';
+import {usePaginacion} from '@composables/usePaginacion.js'
+import {useDatosOrdenadosTabla} from '@composables/useDatosOrdenadosTabla.js'
+import {useTablasResponsive} from '@composables/useTablasResponsive.js'
+// Definiendo variables
+// let menorAMayor = ref(true);
+// let columnaOrden = ref('');
+// const busqueda = ref('');
 
-// 
-const btnAcciones = ref(null)
+// const screenWidth = ref(0);
+// const collapse = ref(false);
+// const columnasVisibles = ref([]);
+// const columnasSobrantes = ref([]);
 
 // funciones
 const props = defineProps({
@@ -35,21 +41,108 @@ const props = defineProps({
 
 
 // tamaño de pantalla
-const {
-    columnasVisibles,
-    columnasSobrantes,
-    collapse,
-    activarCollapse,
-    screenWidth,
-} = useColumnasResponsivas(ref(props.columnas));
+function updateWidth() {
+    if (typeof window !== 'undefined') {
+        screenWidth.value = window.innerWidth;
+    }
+};
+
+onMounted(() => {
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateWidth);
+});
+
+// Columnas visibles y sobrantes
+watch(() => {
+    let acumulado = 0;
+
+    columnasVisibles.value = [];
+    columnasSobrantes.value = [];
+
+    props.columnas.forEach((col) => {
+        acumulado += col.tamaño;
+        if (acumulado <= screenWidth.value - 200) { // Restamos 200px para el espacio de acciones y márgenes
+            columnasVisibles.value.push(col);
+        } else {
+            columnasSobrantes.value.push(col);
+        }
+    });
+
+    // Si hay columnas sobrantes, se activa el colapso
+    collapse.value = columnasSobrantes.value.length > 0;
+});
+
+// Collapse activo
+const activarCollapse = (id) => {
+    const collapseElement = document.getElementById(id);
+
+    if (!collapseElement) return;
+
+    const yaActivo = collapseElement.classList.contains('collapseActive');
+
+    // Cierra todos los elementos activos
+    document.querySelectorAll('.collapseActive').forEach(el => {
+        el.classList.remove('collapseActive');
+    });
+
+    // Si no estaba activo, lo activamos (si ya lo estaba, lo dejamos cerrado)
+    if (!yaActivo) {
+        collapseElement.classList.add('collapseActive');
+    }
+};
+
+
 
 
 // Acomodar datos de menor a mayor segun columna
-const {
-    busqueda,
-    sortedItems,
-    datosOrdenados
-} = useOrdenamiento(computed(() => props.datos.content));
+const sortedItems = (nombreColumna) => {
+    if (columnaOrden.value === nombreColumna) {
+        menorAMayor.value = !menorAMayor.value; // alternar orden
+    } else {
+        columnaOrden.value = nombreColumna;
+        menorAMayor.value = true; // primera vez: menor a mayor
+    }
+    paginaActual.value = 1
+};
+
+// Datos ordenados por busqueda y ordenamiento
+const datosOrdenados = computed(() => {
+    let datos = [...props.datos.content];
+
+    // Búsqueda
+    if (busqueda.value.trim() !== '') {
+        const termino = busqueda.value.trim().toLowerCase();
+        datos = datos.filter(item =>
+            Object.values(item).some(valor =>
+                String(valor).toLowerCase().includes(termino)
+            )
+        );
+    }
+
+    // Ordenamiento
+    if (columnaOrden.value) {
+        datos.sort((a, b) => {
+            const valorA = a[columnaOrden.value];
+            const valorB = b[columnaOrden.value];
+
+            if (typeof valorA === 'number') {
+                return menorAMayor.value ? valorA - valorB : valorB - valorA;
+            } else {
+                return menorAMayor.value
+                    ? String(valorA).localeCompare(String(valorB))
+                    : String(valorB).localeCompare(String(valorA));
+            }
+        });
+    }
+
+    return datos;
+});
+
+
 
 
 // Paginador
@@ -57,25 +150,19 @@ const {
     paginaActual,
     itemsPorPagina,
     totalPaginas,
-    ultimaPagina,
     cambiarItemsPorPagina,
     siguientePagina,
     paginaAnterior,
-    irAPagina,
     datosPaginados,
 } = usePaginacion(datosOrdenados);
 
 
-// Funciones
-const mostrarAcciones = (id) => {
-    btnAcciones.value = btnAcciones.value === id ? null : id;
-};
+// Datos que recorre la tabla
+const datosFiltrados = computed(() => {
 
-// Al buscar cambia a primera pagina
-watch(busqueda, (nuevoValor, anteriorValor) => {
-    if (nuevoValor !== anteriorValor) {
-        paginaActual.value = 1;
-    }
+    const inicio = (paginaActual.value - 1) * itemsPorPagina.value;
+    const fin = inicio + itemsPorPagina.value;
+    return datosOrdenados.value.slice(inicio, fin)
 });
 
 // Tamaño numero de columnas
@@ -83,7 +170,7 @@ const estiloColumnas = computed(() => {
     if (!columnasVisibles.value || columnasVisibles.value.length === 0) return {};
 
     const tamaños = columnasVisibles.value
-        .map(col => col.tamaño && !isNaN(col.tamaño) ? `${col.tamaño}px` : '80px')
+        .map(col => col.tamaño && !isNaN(col.tamaño) ? `${col.tamaño}px` : '60px')
         .join(' ');
 
     return {
@@ -100,7 +187,7 @@ const estiloColumnas = computed(() => {
             <h1 class="font-bold text-2xl tituloTabla text-gray-800">
                 {{ props.headerTabla.titulo }}
             </h1>
-            <div class="flex gap-3 md:w-[50%] justify-end">
+            <div class="flex gap-3 w-[50%] justify-end">
                 <InputBgGray placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
                 <div class="flex gap-1 items-center">
                     <button
@@ -112,7 +199,6 @@ const estiloColumnas = computed(() => {
             </div>
         </div>
 
-        <!-- Tabla -->
         <div class="m-[20px] h-[80%] overflow-y-scroll containerTable shadow ">
             <div class="w-full">
 
@@ -130,43 +216,36 @@ const estiloColumnas = computed(() => {
                 <hr class="horizontal">
 
                 <!-- Body tabla -->
-                <div v-for="(fila, id) in datosPaginados" class="bodyTable justify-between grid p-2 text-center"
+                <div v-for="(fila, id) in datosFiltrados" class="bodyTable justify-between grid p-2 text-center"
                     :style="estiloColumnas">
 
                     <div v-for="(col, key) in columnasVisibles" :key="key"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
                         <p class="text-black">{{ fila[col.titulo] }}</p>
                     </div>
-
                     <!-- Acciones -->
                     <div v-if="acciones.botones"
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="acciones.class">
-                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" :tipo="action" />
+                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" :tipo="action"
+                            @accion="handleAccion" />
 
                         <button @click="activarCollapse(id)" v-if="collapse"
-                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
+                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full">
                             <i class="fa-solid fa-plus text-gray-600"></i>
                         </button>
-
-                        <button @click="mostrarAcciones(id)" v-if="collapse"
-                            class="flex items-center justify-center bg-gray-200 w-[40px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
-                            <i class="fa-solid fa-ellipsis-vertical text-gray-600 mr-1"></i>Ver
-
-                            <div v-if="btnAcciones === id" class="acciones" :id="id">
-                                <BotonAccion v-for="action in acciones.icons" :key="action" :tipo="action" />
-                            </div>
+                        <button
+                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full">
+                            <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
                         </button>
                     </div>
 
                     <!-- collapse -->
                     <div class="collapse-text col-span-full" :id="id">
-                        <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
-                            <h2 v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate">
-                                <p class="text-[var(--color-rojo-oscuro)] text-xs font-bold border-t-gray-200 mb-2 truncate">{{ col.titulo }}</p>
-                                {{ fila[col.titulo] }}
-                            </h2>
-                        </div>
+                        <h2 v-for="(col, key) in columnasSobrantes" class="col-4">
+                            <p class="text-[var(--color-naranja)] text-xs mb-2">{{ col.titulo }}</p>
+                            {{ fila[col.titulo] }}
+                        </h2>
                     </div>
                 </div>
 
@@ -180,32 +259,31 @@ const estiloColumnas = computed(() => {
 
             <div class="btnsPagina flex items-center gap-3">
                 <button v-if="paginaActual > 1"
-                    class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+                    class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full"
                     @click="paginaAnterior()">
-                    <i class="fa-solid fa-angle-left"></i>
+                    <i class="fa-solid fa-caret-left"></i>
                 </button>
                 <div class="flex gap-2 pagina">
-                    <h2 v-if="paginaActual > 1" @click="irAPagina(paginaActual - 1)"
-                        class="text-gray-600 hover:bg-[var(--color-gray-200)] cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                    <h2 v-if="paginaActual > 1"
+                        class="text-gray-600 hover:bg-[var(--color-gray-200)] flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
                         {{ paginaActual - 1 }}</h2>
                     <h2
                         class="bg-[var(--color-gray-200)] text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
                         {{ paginaActual }}</h2>
-                    <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
-                        class="text-gray-600 hover:bg-[var(--color-gray-200)] cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                    <h2 v-if="paginaActual < totalPaginas"
+                        class="text-gray-600 hover:bg-[var(--color-gray-200)] flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
                         {{ paginaActual + 1 }}</h2>
                 </div>
-                <button v-if="paginaActual != totalPaginas"
-                    class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+                <button v-if="paginaActual != totalPaginas" class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full"
                     @click="siguientePagina()">
-                    <i class="fa-solid fa-angle-right"></i>
+                    <i class="fa-solid fa-caret-right"></i>
                 </button>
             </div>
 
             <div class="flex gap-2 items-center">
                 <p class="text-sm text-gray-500">Número de registros</p>
                 <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1"
-                    @change="cambiarItemsPorPagina($event.target.value)">
+                    @change="cambiarItemsPorPagina($event)">
                     <option value="5">5</option>
                     <option value="10" selected>10</option>
                     <option value="20">20</option>
@@ -250,8 +328,10 @@ const estiloColumnas = computed(() => {
 
 .collapse-text {
     display: none;
-    margin-top: 20px;
+    margin-top: 10px;
+    border-radius: 10px;
     pointer-events: none;
+    gap: 15px;
     justify-content: space-evenly;
 }
 
@@ -260,24 +340,6 @@ const estiloColumnas = computed(() => {
     pointer-events: all;
 }
 
-.acciones {
-    position: relative;
-    left: -50px;
-    display: flex;
-    flex-direction: column;
-    border-radius: 5px;
-    padding: 5px;
-}
-
-.acciones button {
-    width: 60px;
-    height: 25px;
-    border-radius: 0;
-}
-
-.acciones button:hover {
-    opacity: 1;
-}
 
 /* Paginador css */
 .btnsPagina button {
