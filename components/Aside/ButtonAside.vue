@@ -1,19 +1,25 @@
 <template>
-    <button :class="{ 'active' : data.active }">
-        <NuxtLink class="link">
+    <button :class="{ 'active': data.active }"
+        class="border-none cursor-pointer text-[var(--color-gris-claro)] p-[15px] flex relative rounded-l-full hover:text-[var(--color-blanco)] hover:bg-[var(--color-rojo-claro)]">
+        <!-- Icono boton -->
+        <NuxtLink class="link w-[24px] h-[24px] pointer-events-none md:pointer-events-all">
             <i class="fa-solid text-xl" :class="data.icon"></i>
         </NuxtLink>
-        <div class="right" @click="activeButton(data.id)">
+        <!-- Desplegable nombre de seccion, "right" -->
+        <div class="right z-999 absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-rojo-claro)] p-[10px] w-[150px] rounded-r-3xl" @click="activeButton(data.id)">
             <NuxtLink :to="`/${data.nombre}/index`" @click="footer.cambiarSecciones(null)">
-                <h3>{{ data.nombre }}</h3>
+                <h3 class="text-[var(--color-rojo)] p-[5px_10px] cursor-pointer text-base font-bold">{{ data.nombre }}</h3>
             </NuxtLink>
-            <div class="down" :class="{ 'ocultar': data.secciones.length == 0 }">
-                <h3 class="font-medium" v-for="seccion in data.secciones">
-                    <NuxtLink :to="`/${data.nombre}/${seccion.titulo}`" @click="footer.cambiarSecciones(seccion.subSecciones)">
+            <!-- Desplegable submenu, "down" -->
+            <div class="down absolute top-full left-[-10%] flex flex-col justify-center items-center z-1 pointer-events-none p-[10px] w-[150px] rounded-br-3xl" :class="{ 'ocultar': data.secciones.length == 0 }">
+                <h3 class="p-[5px_10px] cursor-pointer text-base font-bold text-[var(--color-gris-claro)] hover:text-[var(--color-naranja)]" v-for="seccion in data.secciones">
+                    <NuxtLink :to="`/${data.nombre}/${seccion.titulo}`"
+                        @click="footer.cambiarSecciones(seccion.subSecciones)">
                         {{ seccion.titulo }}
                     </NuxtLink>
                 </h3>
             </div>
+            
         </div>
     </button>
 </template>
@@ -31,22 +37,10 @@ onMounted(() => {
 
 <style scoped>
 button {
-    border: none;
-    cursor: pointer;
-    color: var(--color-gris-claro);
-    padding: 15px;
-    display: flex;
-    border-radius: 50% 0 0 50%;
-    position: relative;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-button:hover {
-    background-color: var(--color-rojo-claro);
-    color: var(--color-blanco);
-}
-
-button.active {
+button .active {
     background-color: var(--color-rojo);
     color: var(--color-blanco);
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -54,32 +48,12 @@ button.active {
 
 .right {
     opacity: 0;
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     transform: translateX(-10px) translateY(-50%);
-    pointer-events: none;
-    background-color: var(--color-rojo-claro);
-    padding: 10px;
-    width: 150px;
-    border-radius: 0 30px 30px 0;
     transition: all 0.3s ease;
 }
 
 .right h3 {
-    color: var(--color-rojo);
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bolder;
     transition: all 0.3s ease;
-}
-
-.right h3:hover {
-    color: var(--color-rojo);
 }
 
 .left button:hover .right {
@@ -96,30 +70,10 @@ button.active {
 
 .down {
     opacity: 0;
-    position: absolute;
-    top: 100%;
-    left: -10%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1;
     transform: translateX(-50%) translateY(-5);
-    pointer-events: none;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(20px);
-    padding: 10px;
-    width: 150px;
-    border-radius: 0 0 30px 0;
     transition: all 0.3s ease;
-}
-
-.down h3 {
-    color: var(--color-gris-claro);
-}
-
-.down h3:hover {
-    color: var(--color-naranja);
 }
 
 .right:hover .down {
@@ -132,14 +86,9 @@ button.active {
     border-radius: 0 30px 0 0;
 }
 
-.show-navbar {
+/* .show-navbar {
     pointer-events: none;
-}
-
-.link {
-    width: 24px;
-    height: 24px;
-}
+} */
 
 @media screen and (max-width: 768px) {
 
@@ -161,7 +110,6 @@ button.active {
 
     .right:hover {
         border-radius: 10px 10px 0 0;
-        /* pointer-events: all; */
     }
 
     .left:hover .down {
@@ -189,10 +137,6 @@ button.active {
 
     .down h3 a {
         padding: 5px;
-    }
-
-    .link {
-        pointer-events: none;
     }
 }
 </style>

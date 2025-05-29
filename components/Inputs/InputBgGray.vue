@@ -2,7 +2,7 @@
     <div class="relative">
     <label>{{ label }}</label>
     <input :placeholder="placeholder" class="inputFondo" @input="$emit('update:modelValue', $event.target.value)"/>
-    <i class="fa-solid iconInput text-gray-600" :class="icon"></i>
+    <i class="fa-solid iconInput absolute left-[10px] top-[47.5%] text-gray-600" :class="icon"></i>
     </div>
 </template>
 

@@ -1,10 +1,6 @@
 @import '@fortawesome/fontawesome-free/css/all.css';
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind utilities;
-
-
 
 :root {
     /* Complementarios */

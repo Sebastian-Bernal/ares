@@ -1,5 +1,4 @@
 <script setup>
-import HeaderTabla from '~/components/Tables/HeaderTabla.vue';
 import Tabla from '~/components/Tables/Tabla.vue';
 // import { datosTabla, datosUser, datosCollapse } from '~/data/TablaVenta';
 // import { usuariosTabla } from '~/data/datosUsuario';

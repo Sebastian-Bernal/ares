@@ -117,7 +117,7 @@ const estiloColumnas = computed(() => {
             <div class="w-full">
 
                 <!-- Header titulos de props Columnas -->
-                <div class="grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white bg-[var(--color-rojo-oscuro)]"
+                <div class="sticky top-0 z-[0] grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white bg-[var(--color-rojo-oscuro)]"
                     :style="estiloColumnas">
                     <h2 v-for="col in columnasVisibles" :key="col.titulo"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
@@ -150,8 +150,8 @@ const estiloColumnas = computed(() => {
                         </button>
 
                         <button @click="mostrarAcciones(id)" v-if="collapse"
-                            class="flex items-center justify-center bg-gray-200 w-[40px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
-                            <i class="fa-solid fa-ellipsis-vertical text-gray-600 mr-1"></i>Ver
+                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
+                            <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
 
                             <div v-if="btnAcciones === id" class="acciones" :id="id">
                                 <BotonAccion v-for="action in acciones.icons" :key="action" :tipo="action" />
@@ -229,12 +229,10 @@ const estiloColumnas = computed(() => {
 
 .bodyTable:hover:nth-child(even) {
     background-color: var(--color-gris);
-    color: var(--color-blanco);
 }
 
 .bodyTable:hover {
     background-color: var(--color-gris);
-    color: var(--color-blanco);
 }
 
 .btnActions {

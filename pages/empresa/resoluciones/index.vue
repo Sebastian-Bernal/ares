@@ -20,6 +20,3 @@
         </div>
     </div>
 </template>
-<script setup>
-import { Input } from '@material-tailwind/html';
-</script>
