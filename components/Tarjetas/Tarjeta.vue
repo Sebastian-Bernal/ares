@@ -1,6 +1,6 @@
 <script setup>
-import ModalTarjetas from './ModalTarjetas.vue';
 import { ref } from 'vue';
+
 const props = defineProps({
     contenido: {
         type: [Array, Object],
@@ -8,17 +8,28 @@ const props = defineProps({
     }
 });
 
-const modalActivo = ref(false);
-let datosModal = ref({});
 const { $swal } = useNuxtApp();
-
-const cambiarDatosModal = (codigo) => {
-    datosModal.value = props.contenido.filter(item => item.codigo === codigo);
-    modalActivo.value = !modalActivo;
-}
 
 function mostrarProducto() {
     $swal.fire("Informacion");
+};
+
+function mostrarAlmacenes(item) {
+    $swal.fire({
+        title: `<h2>Producto: ${item.articulo}</h2>`,
+        html: `
+            Almacen 5: <b>${0} Productos</b> <br>
+            Almacen 6: <b>${0} Productos</b> <br>
+            Almacen 7: <b>${0} Productos</b> <br>
+            Almacen 8: <b>${0} Productos</b> <br>`,
+        // showCloseButton: true,
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: `<i class="fa fa-pencil"></i> Modificar Inventario`,
+        confirmButtonColor: "var(--color-primary)",
+        cancelButtonText: `<i class="fa fa-close"></i> Cerrar`,
+        cancelButtonColor: "var(--color-rojo-oscuro)",
+    });
 };
 </script>
 
@@ -48,7 +59,7 @@ function mostrarProducto() {
                     </p>
                 </div>
 
-                <button @click="modalActivo = true"
+                <button @click="mostrarAlmacenes(item)"
                     class=" mt-5 w-[100%] h-[30px] bg-[var(--color-gray-300)] rounded-xl text-black font-bold text-xs hover:opacity-75">
                     Total de productos: {{ 0 }}
                 </button>
@@ -65,6 +76,7 @@ function mostrarProducto() {
             </div>
         </div>
 
-        <ModalTarjetas v-if="modalActivo" :modalActivo="modalActivo" :datosModal="datosModal" @click="modalActivo = false"/>
+        <!-- <ModalTarjetas v-if="modalActivo" :modalActivo="modalActivo" :datosModal="datosModal"
+            @click="modalActivo = false" /> -->
     </div>
 </template>
